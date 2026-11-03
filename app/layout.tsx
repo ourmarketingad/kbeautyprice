@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import HeaderAuth from "@/components/HeaderAuth";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://kbeautyprice.com"),
@@ -34,10 +35,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="/" style={{ fontWeight: 800, fontSize: 18, color: "var(--accent)", textDecoration: "none", letterSpacing: "-0.5px" }}>
             KBeautyPrice
           </a>
-          <nav style={{ display: "flex", gap: 24, fontSize: 14, color: "var(--muted)" }}>
+          <nav style={{ display: "flex", gap: 20, fontSize: 14, color: "var(--muted)", alignItems: "center" }}>
             <a href="/treatments" style={{ color: "var(--muted)", textDecoration: "none" }}>Treatments</a>
             <a href="/hospitals" style={{ color: "var(--muted)", textDecoration: "none" }}>Hospitals</a>
-            <a href="/submit" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Submit a price →</a>
+            <a href="/submit" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Submit →</a>
+            <HeaderAuth />
           </nav>
         </header>
         <main>{children}</main>
