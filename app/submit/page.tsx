@@ -8,13 +8,47 @@ export const metadata = {
 export default function SubmitPage({
   searchParams,
 }: {
-  searchParams: { treatment?: string };
+  searchParams: { treatment?: string; success?: string; error?: string };
 }) {
   const pre = searchParams.treatment ?? "";
+  const success = searchParams.success === "1";
+  const error = searchParams.error;
+
+  if (success) {
+    return (
+      <div style={{ maxWidth: 600, margin: "6rem auto", padding: "0 1rem", textAlign: "center" }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+        <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 12 }}>Thank you!</h1>
+        <p style={{ color: "var(--muted)", fontSize: 15, marginBottom: 32 }}>
+          Your price submission has been received. We review submissions before publishing — it will appear within 1–2 days.
+        </p>
+        <a
+          href="/treatments"
+          style={{
+            display: "inline-block",
+            background: "var(--accent)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: 10,
+            fontWeight: 700,
+            textDecoration: "none",
+            fontSize: 14,
+          }}
+        >
+          Browse more treatment prices →
+        </a>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 600, margin: "3rem auto", padding: "0 1rem" }}>
       <h1 style={{ fontSize: 26, fontWeight: 900, marginBottom: 8 }}>Submit a real price</h1>
+      {error && (
+        <p style={{ color: "#ef4444", background: "#ef444420", border: "1px solid #ef444440", borderRadius: 8, padding: "10px 14px", marginBottom: 16, fontSize: 14 }}>
+          Something went wrong. Please try again.
+        </p>
+      )}
       <p style={{ color: "var(--muted)", marginBottom: 32, fontSize: 15 }}>
         No name required. Your submission helps other visitors know what clinics actually charge.
       </p>
