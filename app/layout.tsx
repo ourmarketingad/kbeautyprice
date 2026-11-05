@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-import HeaderAuth from "@/components/HeaderAuth";
+import SiteHeader from "@/components/SiteHeader";
 import TabBar from "@/components/TabBar";
 
 // [대표 승인 전] 도메인 연결과 검색 공개는 승인 뒤에 한다. 공개할 때 INDEXABLE 만 true 로 바꾼다.
@@ -40,32 +40,20 @@ export default function RootLayout({
         <a className="skip" href="#main">
           Skip to content
         </a>
-        <header className="site-head">
-          <div className="site-head-in">
-            <Link href="/" className="brand">
-              KBeautyPrice
-            </Link>
-            <nav className="site-nav" aria-label="Main">
-              <Link className="desk" href="/treatments">Prices</Link>
-              <Link className="desk" href="/guides">Guides</Link>
-              <Link className="desk" href="/hospitals">Registered clinics</Link>
-              <Link href="/submit">Report a price</Link>
-              <HeaderAuth />
-            </nav>
-          </div>
-        </header>
+        <SiteHeader />
         <main id="main">{children}</main>
         <footer className="site-foot">
           <div className="wrap">
             <div className="foot-links">
               <Link href="/how-prices-work">How prices work</Link>
-              <Link href="/guides">Guides</Link>
+              <Link href="/submit">Report a price</Link>
               <Link href="/privacy">Privacy</Link>
               <Link href="/terms">Terms</Link>
             </div>
             <p>
               Reference information, not a quote or medical advice. KBeautyPrice
-              does not diagnose or recommend treatment.
+              does not diagnose or recommend treatment. Images are illustrations,
+              not clinic photos.
             </p>
             <p>
               Operated by OUR Marketing (아워마케팅) · CEO Seungyeon Park ·

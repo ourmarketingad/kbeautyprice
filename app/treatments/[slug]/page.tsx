@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Odometer } from "@/components/Motion";
 import QuoteBar from "@/components/QuoteBar";
+import { treatmentImage } from "@/lib/images";
 import { categories } from "@/data/categories";
 import { treatments } from "@/data/treatments";
 import {
@@ -45,7 +46,14 @@ export default async function TreatmentPage({ params }: Props) {
     .filter((x) => x.category === t.category && x.slug !== slug)
     .slice(0, 6);
   return (
-    <div className="wrap page-top has-quote-bar">
+    <div className="wrap detail has-quote-bar">
+      <img
+        className="detail-hero"
+        src={treatmentImage(t.slug)}
+        alt=""
+        width={640}
+        height={480}
+      />
       <p className="note">
         <Link href="/treatments">Prices</Link>
         {cat && (
@@ -55,7 +63,7 @@ export default async function TreatmentPage({ params }: Props) {
           </>
         )}
       </p>
-      <h1 className="h2" style={{ fontSize: "clamp(30px,4.4vw,42px)" }}>
+      <h1 className="detail-title">
         {t.en} price in Seoul
       </h1>
       <p className="sub">
@@ -75,7 +83,7 @@ export default async function TreatmentPage({ params }: Props) {
           </a>
         </div>
       ) : (
-        <ul className="price-list">
+        <ul className="price-panels">
           {rows.map((p) => (
             <li key={p.spec + p.kind}>
               <div className="price-row">
@@ -109,16 +117,14 @@ export default async function TreatmentPage({ params }: Props) {
 
       <section className="section" aria-labelledby="quote-check">
         <h2 id="quote-check">What to check on a written quote</h2>
-        <ul className="price-list">
+        <ul className="check-list">
           {[
             "Product or device, dose, and number of sessions",
             "Whether anaesthesia, medication and follow-up visits are included",
             "Whether VAT is included, and how refunds work",
             "Who performs the treatment, and how long the quote is valid",
           ].map((x) => (
-            <li key={x} style={{ padding: "12px 0" }}>
-              {x}
-            </li>
+            <li key={x}>{x}</li>
           ))}
         </ul>
         <p className="note" style={{ marginTop: 12 }}>
@@ -128,7 +134,7 @@ export default async function TreatmentPage({ params }: Props) {
       </section>
 
       {rows.length > 0 && (
-        <section className="section">
+        <section className="section desk-only">
           <div className="cta-band">
             <p>
               <strong>Want a number for your own plan?</strong>

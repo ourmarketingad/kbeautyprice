@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { guides } from "@/data/guides";
+import { guideImage } from "@/lib/images";
 
 export const metadata = {
   title: "Guides to Korean clinic prices",
@@ -19,9 +20,11 @@ export default function Guides() {
         {guides.map((g) => (
           <li key={g.slug}>
             <Link href={`/guides/${g.slug}`}>
-              <span className="guide-group">{g.group}</span>
-              <strong>{g.title}</strong>
-              <span className="guide-answer">{g.answer}</span>
+              <span>
+                <span className="guide-group">{g.group}</span>
+                <strong>{g.title}</strong>
+              </span>
+              <img src={guideImage(g.slug)} alt="" width={640} height={480} loading="lazy" />
             </Link>
           </li>
         ))}

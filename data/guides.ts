@@ -1,6 +1,6 @@
 // 칼럼(가이드). 비용·견적을 다룬다. 의학적 효과·적합성 주장은 쓰지 않는다.
 // 병원 이름, 환자 경험담, 지어낸 사례를 쓰지 않는다. 금액은 data/prices.json 에서만 가져온다.
-export type GuideBlock = { h: string; p: string[] };
+export type GuideBlock = { h: string; p?: string[]; items?: string[] };
 export type Guide = {
   slug: string;
   group: "Reading prices" | "Quotes" | "Published prices";
@@ -81,8 +81,16 @@ export const guides: Guide[] = [
     blocks: [
       {
         h: "A simple checklist",
-        p: [
-          "Treatment and product name. Dose, shots or area. Number of sessions. Doctor or staff role. Anaesthesia, medication and follow-up visits. VAT. Total amount and currency. Valid until. Refund and cancellation terms.",
+        items: [
+          "Treatment and product name",
+          "Dose, shots or area",
+          "Number of sessions",
+          "Doctor or staff role",
+          "Anaesthesia, medication and follow-up visits",
+          "VAT",
+          "Total amount and currency",
+          "Valid until",
+          "Refund and cancellation terms",
         ],
       },
       {
@@ -109,8 +117,13 @@ export const guides: Guide[] = [
     blocks: [
       {
         h: "The six questions",
-        p: [
-          "Who performs it? Which product or device, and how much? What is the total including VAT? What costs extra? What happens if I need follow-up after I leave Korea? What is the refund policy if I cancel?",
+        items: [
+          "Who performs it?",
+          "Which product or device, and how much?",
+          "What is the total including VAT?",
+          "What costs extra?",
+          "What happens if I need follow-up after I leave Korea?",
+          "What is the refund policy if I cancel?",
         ],
       },
       {

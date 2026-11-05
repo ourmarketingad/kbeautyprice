@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import QuoteBar from "@/components/QuoteBar";
+import { guideImage } from "@/lib/images";
 import { getGuide, guides } from "@/data/guides";
 import { KIND_LABEL, pricesFor, range, usd, won } from "@/lib/prices";
 
@@ -47,13 +48,14 @@ export default async function GuidePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
       />
+      <img className="detail-hero" src={guideImage(g.slug)} alt="" width={640} height={480} />
       <p className="note">
         <Link href="/guides">Guides</Link> · {g.group} · {g.date}
       </p>
       <h1>{g.title}</h1>
       <p className="article-answer">{g.answer}</p>
       {rows.length > 0 && (
-        <ul className="price-list">
+        <ul className="price-panels">
           {rows.map((p) => (
             <li key={p.spec + p.kind}>
               <div className="price-row">
@@ -76,9 +78,16 @@ export default async function GuidePage({ params }: Props) {
       {g.blocks.map((b) => (
         <section key={b.h}>
           <h2>{b.h}</h2>
-          {b.p.map((t) => (
+          {b.p?.map((t) => (
             <p key={t}>{t}</p>
           ))}
+          {b.items && (
+            <ul className="check-list">
+              {b.items.map((t) => (
+                <li key={t}>{t}</li>
+              ))}
+            </ul>
+          )}
         </section>
       ))}
       <section>

@@ -150,6 +150,8 @@ with sync_playwright() as p:
     pm = cm.new_page()
     pm.goto(BASE + "/", wait_until="networkidle")
     check("휴대폰 하단 탭 4개", pm.locator(".tab-bar a").count() == 4)
+    broken = pm.evaluate("async()=>{const r=[];for(const i of document.images){if(!i.complete)continue;if(i.naturalWidth===0)r.push(i.src)}return r}")
+    check("홈 깨진 이미지 0", not broken, str(broken[:3]))
     check("탭 높이 충분", all(pm.locator(".tab-bar a").nth(i).bounding_box()["height"] >= 44 for i in range(4)))
     check("첫 화면에 검색창", pm.locator("#q").bounding_box()["y"] < 700)
     for path in ("/", "/treatments", "/treatments/rejuran", "/guides", "/hospitals", "/how-prices-work"):

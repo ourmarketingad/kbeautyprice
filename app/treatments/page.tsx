@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { categories } from "@/data/categories";
 import { treatments } from "@/data/treatments";
-import { COLLECTED, hasPrices, pricesFor, won } from "@/lib/prices";
+import PriceCard from "@/components/PriceCard";
+import { COLLECTED, hasPrices, pricesFor } from "@/lib/prices";
 
 export const metadata = {
   title: "Treatment prices in Seoul",
@@ -33,8 +34,7 @@ export default async function TreatmentsPage({ searchParams }: Props) {
         Treatment prices in Seoul
       </h1>
       <p className="sub">
-        From prices clinics publish on their own websites, checked {COLLECTED}.
-        Treatments without three published prices show no range.
+        From clinics&apos; own websites, checked {COLLECTED}.
       </p>
       <form action="/treatments" method="get" className="search" role="search">
         <label className="sr-only" htmlFor="tq">
@@ -77,25 +77,13 @@ export default async function TreatmentsPage({ searchParams }: Props) {
             const rows = pricesFor(t.slug);
             const first = rows.find((r) => r.kind === "list") ?? rows[0];
             return (
-              <li key={t.slug}>
-                <Link href={`/treatments/${t.slug}`}>
-                  <span className="card-name">{t.en}</span>
-                  <span className="card-spec" lang="ko">
-                    {t.ko}
-                  </span>
-                  {first ? (
-                    <>
-                      <span className="card-price">{won(first.low)}</span>
-                      <span className="card-to">to {won(first.high)}</span>
-                      <span className="card-meta">
-                        {first.spec} · {first.clinics} clinics
-                      </span>
-                    </>
-                  ) : (
-                    <span className="card-meta">No published range yet</span>
-                  )}
-                </Link>
-              </li>
+              <PriceCard
+                key={t.slug}
+                slug={t.slug}
+                name={t.en}
+                sub={first ? first.spec : t.ko}
+                row={first}
+              />
             );
           })}
         </ul>
