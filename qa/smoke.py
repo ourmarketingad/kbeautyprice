@@ -46,7 +46,8 @@ check("금액 묶음마다 병원 3곳 이상", all(p["clinics"] >= 3 for p in p
 check("금액 묶음의 시술이 목록에 있음", all(p["slug"] in slugs for p in prices))
 check("금액 범위 최저≤최고", all(0 < p["low"] <= p["high"] for p in prices))
 
-CLINICS = ["포에버", "유앤아이", "톡스앤필", "톤즈", "리베리", "아이디", "닥터에버스", "브라운성형", "공간성형", "미큐", "원진"]
+AUDIT = "D:/아워마케팅/OUR-Marketing-KB/80_work/ourmarketing/web/2026-11-06-kbeautyprice/price-groups-audit.json"
+CLINICS = sorted({r["clinic"].split(" ")[0] for g in json.load(open(AUDIT, encoding="utf-8")) for r in g["rows"]})
 BANNED = re.compile(r"real visitors|No fake|No ads|Submit a real|\bbest\b|cheapest|★|before and after photos of|guarantee", re.I)
 guides = re.findall(r'slug: "([^"]+)"', open("data/guides.ts", encoding="utf-8").read())
 PAGES = [f"/guides/{g}" for g in guides] + ["/guides", "/", "/treatments", "/how-prices-work", "/hospitals", "/submit", "/privacy", "/terms", "/auth"] + [f"/treatments/{s}" for s in slugs]
