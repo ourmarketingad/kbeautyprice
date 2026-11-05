@@ -1,63 +1,72 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
-import HeaderAuth from "@/components/HeaderAuth";
+import SiteHeader from "@/components/SiteHeader";
+import TabBar from "@/components/TabBar";
+
+// [대표 승인 전] 도메인 연결과 검색 공개는 승인 뒤에 한다. 공개할 때 INDEXABLE 만 true 로 바꾼다.
+const INDEXABLE = false;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://kbeautyprice.com"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://kbeautyprice.vercel.app",
+  ),
   title: {
-    default: "KBeautyPrice — Real Prices at Korean Clinics",
+    default: "KBeautyPrice | What treatments cost in Seoul, with sources",
     template: "%s | KBeautyPrice",
   },
   description:
-    "Search real prices paid at Korean skin clinics and plastic surgery hospitals. Compare Ultherapy, Rejuran, double eyelid and 100+ treatments across Seoul.",
-  openGraph: {
-    siteName: "KBeautyPrice",
-    type: "website",
-  },
+    "Price ranges for Korean clinic treatments, taken from prices clinics publish on their own websites. Every number shows how many clinics and when we checked.",
+  robots: INDEXABLE
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
+  openGraph: { siteName: "KBeautyPrice", type: "website" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+      </head>
       <body>
-        <header style={{
-          borderBottom: "1px solid var(--border)",
-          padding: "0 1rem",
-          height: 56,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          position: "sticky",
-          top: 0,
-          background: "var(--bg)",
-          zIndex: 100,
-        }}>
-          <a href="/" style={{ fontWeight: 800, fontSize: 18, color: "var(--accent)", textDecoration: "none", letterSpacing: "-0.5px" }}>
-            KBeautyPrice
-          </a>
-          <nav style={{ display: "flex", gap: 20, fontSize: 14, color: "var(--muted)", alignItems: "center" }}>
-            <a href="/treatments" style={{ color: "var(--muted)", textDecoration: "none" }}>Treatments</a>
-            <a href="/hospitals" style={{ color: "var(--muted)", textDecoration: "none" }}>Hospitals</a>
-            <a href="/submit" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Submit →</a>
-            <HeaderAuth />
-          </nav>
-        </header>
-        <main>{children}</main>
-        <footer style={{
-          borderTop: "1px solid var(--border)",
-          padding: "2rem 1rem",
-          marginTop: "4rem",
-          color: "var(--muted)",
-          fontSize: 13,
-          textAlign: "center",
-        }}>
-          <p>KBeautyPrice — Real prices at Korean clinics, submitted by real visitors.</p>
-          <p style={{ marginTop: 8 }}>
-            Concierge service by{" "}
-            <a href="https://koreabeautyconsultant.com" style={{ color: "var(--accent)" }}>COMEDI</a>
-            {" "}· Operated by OUR Marketing
-          </p>
+        <a className="skip" href="#main">
+          Skip to content
+        </a>
+        <SiteHeader />
+        <main id="main">{children}</main>
+        <footer className="site-foot">
+          <div className="wrap">
+            <div className="foot-links">
+              <Link href="/how-prices-work">How prices work</Link>
+              <Link href="/submit">Report a price</Link>
+              <Link href="/privacy">Privacy</Link>
+              <Link href="/terms">Terms</Link>
+            </div>
+            <p>
+              Reference information, not a quote or medical advice. KBeautyPrice
+              does not diagnose or recommend treatment. Images are illustrations,
+              not clinic photos.
+            </p>
+            <p>
+              Operated by OUR Marketing (아워마케팅) · CEO Seungyeon Park ·
+              Business registration 472-21-02120 · Foreign patient attraction
+              registration A-2026-01-02-07119
+            </p>
+            <p>
+              12F Daeryung Seocho Tower, 327 Gangnam-daero, Seocho-gu, Seoul ·
+              ourmarketingad@gmail.com
+            </p>
+          </div>
         </footer>
+        <TabBar />
       </body>
     </html>
   );

@@ -1,237 +1,195 @@
-import { categories } from "@/data/categories";
-import { treatments } from "@/data/treatments";
 import Link from "next/link";
+import { Icon } from "@/components/Icons";
+import { DrawLine, WordTitle } from "@/components/Motion";
+import PriceCard from "@/components/PriceCard";
+import { LINE_JA, LINE_TW, WHATSAPP } from "@/components/QuoteBar";
+import { categories } from "@/data/categories";
+import { guides } from "@/data/guides";
+import { treatments } from "@/data/treatments";
+import { guideImage } from "@/lib/images";
+import { COLLECTED, PRICES } from "@/lib/prices";
 
-const fmt = (n: number) =>
-  n >= 1000 ? `$${(n / 1000).toFixed(0)}k` : `$${n}`;
-
-const popularTreatments = treatments
-  .filter((t) => t.popularityRank)
-  .sort((a, b) => (a.popularityRank ?? 99) - (b.popularityRank ?? 99));
+const withData = new Set(PRICES.map((p) => p.slug));
+const FEATURES = [
+  {
+    href: "/treatments/ultherapy",
+    img: "/img/lifting.webp",
+    kicker: "Published prices",
+    title: "Ultherapy, 300 shots",
+    text: "What Seoul clinics show on their own websites",
+  },
+  {
+    href: "/guides/what-a-written-quote-should-include",
+    img: "/img/hero-quote.webp",
+    kicker: "Guide",
+    title: "What belongs on a written quote",
+    text: "The checklist before you agree to anything",
+  },
+  {
+    href: "/submit",
+    img: "/img/hero-report.webp",
+    kicker: "Help others",
+    title: "Paid in Korea? Report it",
+    text: "No name needed. Published after five reports",
+  },
+];
 
 export default function HomePage() {
+  const rows = PRICES.filter(
+    (p, i, all) =>
+      p.kind === "list" &&
+      all.findIndex((x) => x.slug === p.slug && x.kind === "list") === i,
+  ).slice(0, 8);
+  const cats = categories.filter((c) =>
+    treatments.some((t) => t.category === c.slug),
+  );
   return (
-    <div>
-      {/* ── HERO ─────────────────────────────────── */}
-      <section style={{
-        background: "linear-gradient(135deg, #1e1433 0%, #0a0a0a 60%)",
-        color: "#fff",
-        padding: "4rem 1rem 3rem",
-        textAlign: "center",
-      }}>
-        <p style={{ fontSize: 13, color: "#a78bfa", fontWeight: 600, letterSpacing: 2, marginBottom: 16, textTransform: "uppercase" }}>
-          Real prices · No ads · 11 languages
-        </p>
-        <h1 style={{ fontSize: "clamp(2rem,6vw,3.5rem)", fontWeight: 900, lineHeight: 1.1, marginBottom: 16, letterSpacing: "-1px" }}>
-          So… how much did<br />
-          <span style={{ color: "#a78bfa" }}>Korea actually cost?</span>
-        </h1>
-        <p style={{ color: "#9ca3af", fontSize: "clamp(1rem,3vw,1.2rem)", marginBottom: 32, maxWidth: 520, margin: "0 auto 32px" }}>
-          Compare real prices paid at Seoul skin clinics and surgery hospitals.
-          No fake event prices. No ads.
-        </p>
-
-        {/* Search bar */}
-        <form action="/treatments" method="get" style={{ maxWidth: 560, margin: "0 auto", display: "flex", gap: 8 }}>
-          <input
-            name="q"
-            placeholder="e.g. Ultherapy 300 shots, jaw botox, Rejuran..."
-            style={{
-              flex: 1,
-              padding: "14px 18px",
-              borderRadius: 12,
-              border: "none",
-              fontSize: 15,
-              outline: "none",
-              background: "#fff",
-              color: "#111",
-            }}
-          />
-          <button type="submit" style={{
-            padding: "14px 24px",
-            background: "#7c3aed",
-            color: "#fff",
-            border: "none",
-            borderRadius: 12,
-            fontWeight: 700,
-            fontSize: 15,
-            cursor: "pointer",
-          }}>
-            Search
-          </button>
-        </form>
-
-        <div style={{ marginTop: 20, display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
-          {["Ultherapy 300 shots", "Jaw botox", "Rejuran", "Double eyelid"].map((term) => (
-            <a
-              key={term}
-              href={`/treatments?q=${encodeURIComponent(term)}`}
-              style={{
-                background: "#ffffff18",
-                color: "#d1d5db",
-                padding: "6px 14px",
-                borderRadius: 20,
-                fontSize: 13,
-                textDecoration: "none",
-                border: "1px solid #ffffff22",
-              }}
-            >
-              {term}
-            </a>
-          ))}
+    <>
+      <section className="top-band">
+        <div className="wrap">
+          <WordTitle text="Seoul clinic prices, with the source on every number." />
+          <form
+            action="/treatments"
+            method="get"
+            className="search-pill"
+            role="search"
+          >
+            <label className="sr-only" htmlFor="q">
+              Search treatments
+            </label>
+            <input
+              id="q"
+              name="q"
+              type="search"
+              placeholder="Ultherapy, jaw botox, 리쥬란"
+              autoComplete="off"
+            />
+            <button type="submit" aria-label="Search">
+              <Icon name="search" size={22} />
+            </button>
+          </form>
         </div>
-
-        <p style={{ color: "#6b7280", fontSize: 13, marginTop: 24 }}>
-          Price data from real visitors · Updated 2026
-        </p>
-      </section>
-
-      {/* ── POPULAR PRICES ─────────────────────── */}
-      <section style={{ maxWidth: 900, margin: "3rem auto", padding: "0 1rem" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 20 }}>
-          Most searched treatments
-        </h2>
-        <div style={{ display: "grid", gap: 12 }}>
-          {popularTreatments.map((t) => {
-            const p = t.prices[1] ?? t.prices[0];
-            return (
-              <Link
-                key={t.slug}
-                href={`/treatments/${t.slug}`}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "16px 20px",
-                  background: "var(--card)",
-                  borderRadius: 12,
-                  border: "1px solid var(--border)",
-                  textDecoration: "none",
-                  color: "var(--fg)",
-                  gap: 12,
-                }}
-              >
-                <div>
-                  <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{t.en}</p>
-                  <p style={{ color: "var(--muted)", fontSize: 13 }}>{p.label}</p>
-                </div>
-                <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  <p style={{ fontWeight: 800, fontSize: 16, color: "var(--accent)" }}>
-                    {fmt(p.usdLow)}–{fmt(p.usdHigh)}
-                  </p>
-                  <p style={{ color: "var(--muted)", fontSize: 12 }}>
-                    ₩{p.krwLow.toLocaleString()}–₩{p.krwHigh.toLocaleString()}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-        <div style={{ textAlign: "center", marginTop: 20 }}>
-          <Link href="/treatments" style={{ color: "var(--accent)", fontWeight: 600, fontSize: 14, textDecoration: "none" }}>
-            View all treatments →
-          </Link>
-        </div>
-      </section>
-
-      {/* ── CATEGORIES ─────────────────────────── */}
-      <section style={{ maxWidth: 900, margin: "0 auto 3rem", padding: "0 1rem" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 20 }}>
-          Browse by category
-        </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12 }}>
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/treatments?category=${cat.slug}`}
-              style={{
-                padding: "16px",
-                background: "var(--card)",
-                borderRadius: 12,
-                border: "1px solid var(--border)",
-                textDecoration: "none",
-                color: "var(--fg)",
-                display: "block",
-              }}
-            >
-              <span style={{ fontSize: 24 }}>{cat.emoji}</span>
-              <p style={{ fontWeight: 700, fontSize: 14, marginTop: 8 }}>{cat.en}</p>
-              <p style={{ color: "var(--muted)", fontSize: 12, marginTop: 4, lineHeight: 1.4 }}>{cat.description}</p>
+        <div className="feat" aria-label="Featured">
+          {FEATURES.map((f) => (
+            <Link key={f.href} href={f.href} className="feat-card">
+              <img src={f.img} alt="" width={640} height={480} />
+              <span>
+                <em>{f.kicker}</em>
+                <strong>{f.title}</strong>
+                {f.text}
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* ── SUBMIT CTA ─────────────────────────── */}
-      <section style={{
-        maxWidth: 900,
-        margin: "0 auto 4rem",
-        padding: "2rem",
-        background: "var(--accent-light)",
-        borderRadius: 16,
-        textAlign: "center",
-      }}>
-        <p style={{ fontSize: 22, fontWeight: 800, marginBottom: 8 }}>
-          Visited a Seoul clinic? Share what you paid.
+      <nav className="cats wrap" aria-label="Treatment categories">
+        {cats.map((c) => (
+          <Link key={c.slug} href={`/treatments?category=${c.slug}`}>
+            <span>
+              <Icon name={c.slug} size={26} />
+            </span>
+            {c.en}
+          </Link>
+        ))}
+      </nav>
+
+      <section className="section wrap" aria-labelledby="ranges">
+        <div className="sec-head">
+          <h2 id="ranges">Published prices</h2>
+          <Link href="/treatments" aria-label="See all prices">
+            <Icon name="arrow" size={20} />
+          </Link>
+        </div>
+        <p className="sub">
+          {withData.size} treatments · checked {COLLECTED} · three clinics or
+          more
         </p>
-        <p style={{ color: "var(--muted)", marginBottom: 20, fontSize: 15 }}>
-          Your price helps the next person know what to expect — no name required.
-        </p>
-        <Link
-          href="/submit"
-          style={{
-            display: "inline-block",
-            background: "var(--accent)",
-            color: "#fff",
-            padding: "14px 28px",
-            borderRadius: 10,
-            fontWeight: 700,
-            textDecoration: "none",
-            fontSize: 15,
-          }}
-        >
-          Submit a real price →
-        </Link>
+        <ul className="cards">
+          {rows.map((p, i) => {
+            const t = treatments.find((x) => x.slug === p.slug);
+            return (
+              <PriceCard
+                key={p.slug + p.spec}
+                slug={p.slug}
+                name={p.spec}
+                sub={t?.ko}
+                row={p}
+                odometer
+                lazy={i > 1}
+              />
+            );
+          })}
+        </ul>
       </section>
 
-      {/* ── COMEDI LINK ────────────────────────── */}
-      <section style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: "0 1rem 3rem",
-        display: "flex",
-        gap: 16,
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderTop: "1px solid var(--border)",
-        paddingTop: "2rem",
-      }}>
-        <div>
-          <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
-            Need help booking the right clinic?
-          </p>
-          <p style={{ color: "var(--muted)", fontSize: 14 }}>
-            COMEDI is a registered Seoul beauty concierge — research, booking and interpretation included.
-          </p>
+      <div className="wrap">
+        <DrawLine />
+      </div>
+      <section className="section wrap" aria-labelledby="guides">
+        <div className="sec-head">
+          <h2 id="guides">Guides</h2>
+          <Link href="/guides" aria-label="See all guides">
+            <Icon name="arrow" size={20} />
+          </Link>
         </div>
-        <a
-          href="https://koreabeautyconsultant.com"
-          target="_blank"
-          style={{
-            padding: "12px 20px",
-            border: "2px solid var(--accent)",
-            borderRadius: 10,
-            color: "var(--accent)",
-            fontWeight: 700,
-            textDecoration: "none",
-            fontSize: 14,
-            flexShrink: 0,
-          }}
-        >
-          Visit COMEDI →
-        </a>
+        <ul className="guide-list">
+          {guides.slice(0, 3).map((g) => (
+            <li key={g.slug}>
+              <Link href={`/guides/${g.slug}`}>
+                <span>
+                  <span className="guide-group">{g.group}</span>
+                  <strong>{g.title}</strong>
+                </span>
+                <img src={guideImage(g.slug)} alt="" width={640} height={480} loading="lazy" />
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
-    </div>
+
+      <div className="wrap">
+        <DrawLine />
+      </div>
+      <section className="section wrap" aria-labelledby="kinds">
+        <h2 id="kinds">Three prices, three meanings</h2>
+        <div className="three">
+          <div>
+            <h3>Listed price</h3>
+            <p>The clinic&apos;s regular or pre-discount price on its page.</p>
+          </div>
+          <div>
+            <h3>Event price</h3>
+            <p>Limited by date or by who qualifies. We keep it separate.</p>
+          </div>
+          <div>
+            <h3 className="mark">Your written quote</h3>
+            <p>What a clinic proposes for you, item by item. This one counts.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section wrap">
+        <div className="cta-dark">
+          <h2>Want a number for your own plan?</h2>
+          <p>
+            COMEDI, run by the same company, can ask a clinic for a written
+            quote. Clinics may pay COMEDI a referral fee, explained in writing
+            before you book.
+          </p>
+          <div>
+            <a className="btn" href={WHATSAPP}>
+              <Icon name="chat" size={18} /> WhatsApp
+            </a>
+            <a className="btn-soft" href={LINE_JA} lang="ja">
+              LINE 日本語
+            </a>
+            <a className="btn-soft" href={LINE_TW} lang="zh-Hant">
+              LINE 繁中
+            </a>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

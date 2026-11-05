@@ -8,6 +8,7 @@ export default function HeaderAuth() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return;
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {

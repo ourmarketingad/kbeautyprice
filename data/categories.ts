@@ -9,6 +9,7 @@ export type CategorySlug =
   | "hair-removal"
   | "thread-lift"
   | "fat-dissolving"
+  | "body"
   | "dental"
   | "hair-transplant";
 
@@ -35,4 +36,5 @@ export const categories: Category[] = [
   { slug: "fat-dissolving", en: "Fat Dissolving", ko: "지방분해", ja: "脂肪溶解", "zh-TW": "溶脂·縮下巴", emoji: "🔥", description: "Kybella, PCDC injection, body contouring" },
   { slug: "dental", en: "Dental", ko: "치과", ja: "歯科", "zh-TW": "牙齒整形", emoji: "🦷", description: "Veneers, whitening, implant, Invisalign" },
   { slug: "hair-transplant", en: "Hair Transplant", ko: "모발이식", ja: "植毛", "zh-TW": "植髮", emoji: "💈", description: "FUE, DHI hair transplant" },
+  { slug: "body", en: "Liposuction", ko: "지방흡입", ja: "脂肪吸引", "zh-TW": "抽脂", emoji: "", description: "Liposuction" },
 ];

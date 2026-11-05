@@ -11,6 +11,7 @@ const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }>
 };
 
 export default async function MySubmissionsPage() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) redirect("/auth");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
