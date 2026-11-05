@@ -1,223 +1,101 @@
+import Link from "next/link";
 import { treatments } from "@/data/treatments";
 
 export const metadata = {
-  title: "Submit a real price",
-  description: "Share what you actually paid at a Korean clinic. Helps others compare real prices, not ad prices.",
+  title: "Report a price",
+  description:
+    "Report what you paid at a Korean clinic, without your name. Reports appear only after five people report the same item.",
 };
 
-export default function SubmitPage({
-  searchParams,
-}: {
-  searchParams: { treatment?: string; success?: string; error?: string };
-}) {
-  const pre = searchParams.treatment ?? "";
-  const success = searchParams.success === "1";
-  const error = searchParams.error;
+type Props = {
+  searchParams: Promise<{ treatment?: string; success?: string; error?: string }>;
+};
 
-  if (success) {
+const ERRORS: Record<string, string> = {
+  missing: "Choose a treatment and enter the price you paid.",
+  price: "Enter a price between $1 and $200,000, or between ₩1,000 and ₩300,000,000.",
+  consent: "Please tick the box to agree before sending.",
+  server: "We could not save your report. Please try again in a few minutes.",
+};
+
+export default async function SubmitPage({ searchParams }: Props) {
+  const { treatment = "", success, error } = await searchParams;
+  if (success === "1") {
     return (
-      <div style={{ maxWidth: 600, margin: "6rem auto", padding: "0 1rem", textAlign: "center" }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-        <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 12 }}>Thank you!</h1>
-        <p style={{ color: "var(--muted)", fontSize: 15, marginBottom: 32 }}>
-          Your price submission has been received. We review submissions before publishing — it will appear within 1–2 days.
+      <div className="narrow">
+        <h1>Thank you. We received your report.</h1>
+        <p>
+          We check reports first. Yours will count toward a published number
+          once five people report the same item.
         </p>
-        <a
-          href="/treatments"
-          style={{
-            display: "inline-block",
-            background: "var(--accent)",
-            color: "#fff",
-            padding: "12px 24px",
-            borderRadius: 10,
-            fontWeight: 700,
-            textDecoration: "none",
-            fontSize: 14,
-          }}
-        >
-          Browse more treatment prices →
-        </a>
+        <Link className="btn" href="/treatments">
+          Back to prices
+        </Link>
       </div>
     );
   }
-
   return (
-    <div style={{ maxWidth: 600, margin: "3rem auto", padding: "0 1rem" }}>
-      <h1 style={{ fontSize: 26, fontWeight: 900, marginBottom: 8 }}>Submit a real price</h1>
+    <div className="narrow">
+      <h1>Report a price</h1>
+      <p>
+        Tell us what you paid. No name, clinic or photo is needed. Please do not
+        write names, phone numbers or health details in the notes.
+      </p>
       {error && (
-        <p style={{ color: "#ef4444", background: "#ef444420", border: "1px solid #ef444440", borderRadius: 8, padding: "10px 14px", marginBottom: 16, fontSize: 14 }}>
-          Something went wrong. Please try again.
+        <p className="alert" role="alert">
+          {ERRORS[error] ?? ERRORS.server}
         </p>
       )}
-      <p style={{ color: "var(--muted)", marginBottom: 32, fontSize: 15 }}>
-        No name required. Your submission helps other visitors know what clinics actually charge.
-      </p>
-
-      <form
-        action="/api/submit"
-        method="POST"
-        style={{ display: "flex", flexDirection: "column", gap: 18 }}
-      >
-        {/* Treatment */}
-        <div>
-          <label style={{ display: "block", fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-            Treatment *
-          </label>
-          <select
-            name="treatment"
-            defaultValue={pre}
-            required
-            style={{
-              width: "100%",
-              padding: "12px 14px",
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--card)",
-              color: "var(--fg)",
-              fontSize: 14,
-            }}
-          >
-            <option value="">Select treatment…</option>
+      <form action="/api/submit" method="POST" className="form">
+        <div className="field">
+          <label htmlFor="treatment">Treatment (required)</label>
+          <select id="treatment" name="treatment" defaultValue={treatment} required>
+            <option value="">Select a treatment</option>
             {treatments.map((t) => (
               <option key={t.slug} value={t.slug}>
                 {t.en}
               </option>
             ))}
-            <option value="other">Other (write below)</option>
+            <option value="other">Other (describe in notes)</option>
           </select>
         </div>
-
-        {/* Spec */}
-        <div>
-          <label style={{ display: "block", fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-            Spec / amount (e.g. "300 shots", "50 units", "2cc")
-          </label>
-          <input
-            name="spec"
-            placeholder="e.g. 300 shots, Allergan 50 units"
-            style={{
-              width: "100%",
-              padding: "12px 14px",
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--card)",
-              color: "var(--fg)",
-              fontSize: 14,
-            }}
-          />
+        <div className="field">
+          <label htmlFor="spec">Amount or size</label>
+          <input id="spec" name="spec" maxLength={120} placeholder="300 shots, 50 units, 2cc" />
         </div>
-
-        {/* Price */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <div>
-            <label style={{ display: "block", fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-              Price you paid (USD) *
-            </label>
-            <input
-              name="usd"
-              type="number"
-              placeholder="e.g. 750"
-              required
-              style={{
-                width: "100%",
-                padding: "12px 14px",
-                borderRadius: 10,
-                border: "1px solid var(--border)",
-                background: "var(--card)",
-                color: "var(--fg)",
-                fontSize: 14,
-              }}
-            />
+        <div className="two-col">
+          <div className="field">
+            <label htmlFor="krw">Price paid in won</label>
+            <input id="krw" name="krw" type="number" min={1000} max={300000000} inputMode="numeric" placeholder="1050000" />
           </div>
-          <div>
-            <label style={{ display: "block", fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-              Price in KRW (optional)
-            </label>
-            <input
-              name="krw"
-              type="number"
-              placeholder="e.g. 1050000"
-              style={{
-                width: "100%",
-                padding: "12px 14px",
-                borderRadius: 10,
-                border: "1px solid var(--border)",
-                background: "var(--card)",
-                color: "var(--fg)",
-                fontSize: 14,
-              }}
-            />
+          <div className="field">
+            <label htmlFor="usd">Or in US dollars</label>
+            <input id="usd" name="usd" type="number" min={1} max={200000} inputMode="numeric" placeholder="750" />
           </div>
         </div>
-
-        {/* Year */}
-        <div>
-          <label style={{ display: "block", fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-            Year of visit *
-          </label>
-          <select
-            name="year"
-            required
-            style={{
-              width: "100%",
-              padding: "12px 14px",
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--card)",
-              color: "var(--fg)",
-              fontSize: 14,
-            }}
-          >
+        <div className="field">
+          <label htmlFor="year">Year of visit (required)</label>
+          <select id="year" name="year" required defaultValue="2026">
             <option value="2026">2026</option>
             <option value="2025">2025</option>
             <option value="2024">2024</option>
-            <option value="2023">2023</option>
           </select>
         </div>
-
-        {/* Notes */}
-        <div>
-          <label style={{ display: "block", fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-            Notes (optional)
-          </label>
-          <textarea
-            name="notes"
-            placeholder="e.g. Was a first-visit promo, price for Korean brand not Allergan, included VAT..."
-            rows={3}
-            style={{
-              width: "100%",
-              padding: "12px 14px",
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--card)",
-              color: "var(--fg)",
-              fontSize: 14,
-              resize: "vertical",
-            }}
-          />
+        <div className="field">
+          <label htmlFor="notes">Notes</label>
+          <textarea id="notes" name="notes" rows={3} maxLength={500} placeholder="Event price, VAT included, product brand" />
         </div>
-
-        <button
-          type="submit"
-          style={{
-            padding: "14px",
-            background: "var(--accent)",
-            color: "#fff",
-            border: "none",
-            borderRadius: 12,
-            fontWeight: 700,
-            fontSize: 16,
-            cursor: "pointer",
-          }}
-        >
-          Submit price
+        <label className="check">
+          <input type="checkbox" name="consent" value="yes" required />
+          <span>
+            I paid this myself, and I agree that KBeautyPrice may use this report
+            in anonymous price ranges. See the <Link href="/privacy">privacy notice</Link>.
+          </span>
+        </label>
+        <button type="submit" className="btn">
+          Send report
         </button>
       </form>
-
-      <p style={{ color: "var(--muted)", fontSize: 12, marginTop: 16, lineHeight: 1.6 }}>
-        We review submissions before publishing. No personal information is collected.
-        Submissions are public once approved.
-      </p>
     </div>
   );
 }

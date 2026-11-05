@@ -1,0 +1,166 @@
+{
+ "collected": "2026-11-06",
+ "krwPerUsd": 1400,
+ "items": [
+  {
+   "slug": "ultherapy",
+   "spec": "Ultherapy Prime, 300 shots",
+   "kind": "list",
+   "low": 990000,
+   "high": 1770000,
+   "clinics": 5,
+   "vat": "mixed",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "thermage",
+   "spec": "Thermage FLX, 600 shots",
+   "kind": "list",
+   "low": 1990000,
+   "high": 3529000,
+   "clinics": 6,
+   "vat": "mixed",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "thermage",
+   "spec": "Thermage FLX, 600 shots",
+   "kind": "event",
+   "low": 1690000,
+   "high": 2200000,
+   "clinics": 4,
+   "vat": "excluded",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "jaw-botox",
+   "spec": "Korean-made toxin, jaw area",
+   "kind": "list",
+   "low": 17000,
+   "high": 37000,
+   "clinics": 4,
+   "vat": "excluded",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "jaw-botox",
+   "spec": "Korean-made toxin, jaw area",
+   "kind": "event",
+   "low": 14000,
+   "high": 35000,
+   "clinics": 4,
+   "vat": "excluded",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "rejuran",
+   "spec": "Rejuran Healer, 2cc",
+   "kind": "list",
+   "low": 180000,
+   "high": 370000,
+   "clinics": 6,
+   "vat": "mixed",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "rejuran",
+   "spec": "Rejuran Healer, 2cc",
+   "kind": "event",
+   "low": 190000,
+   "high": 200000,
+   "clinics": 3,
+   "vat": "excluded",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "juvelook",
+   "spec": "Juvelook Skin, 1cc",
+   "kind": "list",
+   "low": 59000,
+   "high": 119000,
+   "clinics": 4,
+   "vat": "excluded",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "juvelook",
+   "spec": "Juvelook Volume, 1 vial",
+   "kind": "list",
+   "low": 490000,
+   "high": 738000,
+   "clinics": 3,
+   "vat": "excluded",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "juvelook",
+   "spec": "Juvelook Volume, 1 vial",
+   "kind": "event",
+   "low": 390000,
+   "high": 590000,
+   "clinics": 3,
+   "vat": "excluded",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "pico-toning",
+   "spec": "Pico toning, 1 session",
+   "kind": "list",
+   "low": 74000,
+   "high": 150000,
+   "clinics": 4,
+   "vat": "mixed",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "potenza",
+   "spec": "Potenza, 1 session (tip type differs by clinic)",
+   "kind": "list",
+   "low": 200000,
+   "high": 313000,
+   "clinics": 5,
+   "vat": "mixed",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "dermal-filler",
+   "spec": "Korean-made hyaluronic filler, 1cc",
+   "kind": "list",
+   "low": 90000,
+   "high": 290000,
+   "clinics": 3,
+   "vat": "excluded",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "laser-hair-removal",
+   "spec": "Women, full face, 1 session (areas covered differ)",
+   "kind": "list",
+   "low": 60000,
+   "high": 124000,
+   "clinics": 3,
+   "vat": "mixed",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "double-eyelid-non-incision",
+   "spec": "Non-incision double eyelid, first surgery",
+   "kind": "list",
+   "low": 390000,
+   "high": 1000000,
+   "clinics": 3,
+   "vat": "mixed",
+   "seenOn": "2026-11-06"
+  },
+  {
+   "slug": "liposuction",
+   "spec": "Whole abdomen (aftercare may be extra)",
+   "kind": "list",
+   "low": 1500000,
+   "high": 4000000,
+   "clinics": 3,
+   "vat": "mixed",
+   "seenOn": "2026-11-06"
+  }
+ ]
+}

@@ -1,237 +1,164 @@
-import { categories } from "@/data/categories";
-import { treatments } from "@/data/treatments";
 import Link from "next/link";
+import { DrawLine, Odometer, WordTitle } from "@/components/Motion";
+import { categories } from "@/data/categories";
+import { guides } from "@/data/guides";
+import { treatments } from "@/data/treatments";
+import {
+  COLLECTED,
+  KIND_LABEL,
+  PRICES,
+  range,
+  usd,
+  won,
+} from "@/lib/prices";
+import { LINE_JA, LINE_TW, WHATSAPP } from "@/components/QuoteBar";
 
-const fmt = (n: number) =>
-  n >= 1000 ? `$${(n / 1000).toFixed(0)}k` : `$${n}`;
-
-const popularTreatments = treatments
-  .filter((t) => t.popularityRank)
-  .sort((a, b) => (a.popularityRank ?? 99) - (b.popularityRank ?? 99));
+const withData = new Set(PRICES.map((p) => p.slug));
 
 export default function HomePage() {
+  const rows = PRICES.filter((p) => p.kind === "list").slice(0, 8);
+  const cats = categories.filter((c) =>
+    treatments.some((t) => t.category === c.slug && withData.has(t.slug)),
+  );
   return (
-    <div>
-      {/* ── HERO ─────────────────────────────────── */}
-      <section style={{
-        background: "linear-gradient(135deg, #1e1433 0%, #0a0a0a 60%)",
-        color: "#fff",
-        padding: "4rem 1rem 3rem",
-        textAlign: "center",
-      }}>
-        <p style={{ fontSize: 13, color: "#a78bfa", fontWeight: 600, letterSpacing: 2, marginBottom: 16, textTransform: "uppercase" }}>
-          Real prices · No ads · 11 languages
+    <>
+      <section className="hero wrap">
+        <WordTitle text="What treatments cost in Seoul, with the source on every number." />
+        <p className="hero-deck">
+          Ranges from prices clinics publish on their own websites, with how
+          many clinics and the date checked.
         </p>
-        <h1 style={{ fontSize: "clamp(2rem,6vw,3.5rem)", fontWeight: 900, lineHeight: 1.1, marginBottom: 16, letterSpacing: "-1px" }}>
-          So… how much did<br />
-          <span style={{ color: "#a78bfa" }}>Korea actually cost?</span>
-        </h1>
-        <p style={{ color: "#9ca3af", fontSize: "clamp(1rem,3vw,1.2rem)", marginBottom: 32, maxWidth: 520, margin: "0 auto 32px" }}>
-          Compare real prices paid at Seoul skin clinics and surgery hospitals.
-          No fake event prices. No ads.
-        </p>
-
-        {/* Search bar */}
-        <form action="/treatments" method="get" style={{ maxWidth: 560, margin: "0 auto", display: "flex", gap: 8 }}>
+        <form action="/treatments" method="get" className="search" role="search">
+          <label className="sr-only" htmlFor="q">
+            Search treatments
+          </label>
           <input
+            id="q"
             name="q"
-            placeholder="e.g. Ultherapy 300 shots, jaw botox, Rejuran..."
-            style={{
-              flex: 1,
-              padding: "14px 18px",
-              borderRadius: 12,
-              border: "none",
-              fontSize: 15,
-              outline: "none",
-              background: "#fff",
-              color: "#111",
-            }}
+            type="search"
+            placeholder="Ultherapy, jaw botox, 리쥬란"
+            autoComplete="off"
           />
-          <button type="submit" style={{
-            padding: "14px 24px",
-            background: "#7c3aed",
-            color: "#fff",
-            border: "none",
-            borderRadius: 12,
-            fontWeight: 700,
-            fontSize: 15,
-            cursor: "pointer",
-          }}>
+          <button type="submit" className="btn">
             Search
           </button>
         </form>
-
-        <div style={{ marginTop: 20, display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
-          {["Ultherapy 300 shots", "Jaw botox", "Rejuran", "Double eyelid"].map((term) => (
-            <a
-              key={term}
-              href={`/treatments?q=${encodeURIComponent(term)}`}
-              style={{
-                background: "#ffffff18",
-                color: "#d1d5db",
-                padding: "6px 14px",
-                borderRadius: 20,
-                fontSize: 13,
-                textDecoration: "none",
-                border: "1px solid #ffffff22",
-              }}
-            >
-              {term}
-            </a>
-          ))}
-        </div>
-
-        <p style={{ color: "#6b7280", fontSize: 13, marginTop: 24 }}>
-          Price data from real visitors · Updated 2026
-        </p>
       </section>
 
-      {/* ── POPULAR PRICES ─────────────────────── */}
-      <section style={{ maxWidth: 900, margin: "3rem auto", padding: "0 1rem" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 20 }}>
-          Most searched treatments
-        </h2>
-        <div style={{ display: "grid", gap: 12 }}>
-          {popularTreatments.map((t) => {
-            const p = t.prices[1] ?? t.prices[0];
+      <div className="hscroll wrap" aria-label="Categories">
+        {cats.map((c) => (
+          <Link key={c.slug} href={`/treatments?category=${c.slug}`}>
+            {c.en}
+          </Link>
+        ))}
+      </div>
+
+      <section className="section wrap" aria-labelledby="ranges">
+        <h2 id="ranges">Published price ranges</h2>
+        <p className="sub">
+          {withData.size} treatments · checked {COLLECTED}. A range needs at
+          least three clinics.
+        </p>
+        <ul className="cards">
+          {rows.map((p) => {
+            const t = treatments.find((x) => x.slug === p.slug);
             return (
-              <Link
-                key={t.slug}
-                href={`/treatments/${t.slug}`}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "16px 20px",
-                  background: "var(--card)",
-                  borderRadius: 12,
-                  border: "1px solid var(--border)",
-                  textDecoration: "none",
-                  color: "var(--fg)",
-                  gap: 12,
-                }}
-              >
-                <div>
-                  <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{t.en}</p>
-                  <p style={{ color: "var(--muted)", fontSize: 13 }}>{p.label}</p>
-                </div>
-                <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  <p style={{ fontWeight: 800, fontSize: 16, color: "var(--accent)" }}>
-                    {fmt(p.usdLow)}–{fmt(p.usdHigh)}
-                  </p>
-                  <p style={{ color: "var(--muted)", fontSize: 12 }}>
-                    ₩{p.krwLow.toLocaleString()}–₩{p.krwHigh.toLocaleString()}
-                  </p>
-                </div>
-              </Link>
+              <li key={p.slug + p.spec}>
+                <Link href={`/treatments/${p.slug}`}>
+                  <span className="card-name">{t?.en ?? p.slug}</span>
+                  <span className="card-spec">{p.spec}</span>
+                  <span className="card-price">
+                    <Odometer value={won(p.low)} />
+                  </span>
+                  <span className="card-to">to {won(p.high)}</span>
+                  <span className="card-meta">
+                    {KIND_LABEL[p.kind]} · {p.clinics} clinics · about{" "}
+                    {range(p.low, p.high, usd)}
+                  </span>
+                </Link>
+              </li>
             );
           })}
+        </ul>
+        <div className="chips">
+          <Link href="/treatments">See all treatments</Link>
         </div>
-        <div style={{ textAlign: "center", marginTop: 20 }}>
-          <Link href="/treatments" style={{ color: "var(--accent)", fontWeight: 600, fontSize: 14, textDecoration: "none" }}>
-            View all treatments →
+      </section>
+
+      <div className="wrap">
+        <DrawLine />
+      </div>
+      <section className="section wrap" aria-labelledby="guides">
+        <h2 id="guides">Guides</h2>
+        <ul className="guide-list">
+          {guides.slice(0, 3).map((g) => (
+            <li key={g.slug}>
+              <Link href={`/guides/${g.slug}`}>
+                <span className="guide-group">{g.group}</span>
+                <strong>{g.title}</strong>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="chips">
+          <Link href="/guides">See all guides</Link>
+        </div>
+      </section>
+
+      <div className="wrap">
+        <DrawLine />
+      </div>
+      <section className="section wrap" aria-labelledby="kinds">
+        <h2 id="kinds">Three prices, three different meanings</h2>
+        <div className="three">
+          <div>
+            <h3>Listed price</h3>
+            <p>The clinic&apos;s regular or pre-discount price on its page.</p>
+          </div>
+          <div>
+            <h3>Event price</h3>
+            <p>Limited by date or by who qualifies. We keep it separate.</p>
+          </div>
+          <div>
+            <h3>Your written quote</h3>
+            <p>What a clinic proposes for you, item by item. This one counts.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section wrap">
+        <div className="cta-band">
+          <p>
+            <strong>Want a written quote?</strong>
+            COMEDI, run by the same company, can ask a clinic for you. Clinics
+            may pay COMEDI a referral fee, explained in writing before you book.
+          </p>
+          <div className="chips" style={{ marginTop: 0 }}>
+            <a className="btn" href={WHATSAPP}>
+              WhatsApp
+            </a>
+            <a className="btn-line" href={LINE_JA} lang="ja">
+              LINE 日本語
+            </a>
+            <a className="btn-line" href={LINE_TW} lang="zh-Hant">
+              LINE 繁中
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="section wrap">
+        <div className="cta-band">
+          <p>
+            <strong>Paid for a treatment in Korea?</strong>
+            Report it without your name. Reports appear after five people report
+            the same item. None are published yet.
+          </p>
+          <Link className="btn-line" href="/submit">
+            Report a price
           </Link>
         </div>
       </section>
-
-      {/* ── CATEGORIES ─────────────────────────── */}
-      <section style={{ maxWidth: 900, margin: "0 auto 3rem", padding: "0 1rem" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 20 }}>
-          Browse by category
-        </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12 }}>
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/treatments?category=${cat.slug}`}
-              style={{
-                padding: "16px",
-                background: "var(--card)",
-                borderRadius: 12,
-                border: "1px solid var(--border)",
-                textDecoration: "none",
-                color: "var(--fg)",
-                display: "block",
-              }}
-            >
-              <span style={{ fontSize: 24 }}>{cat.emoji}</span>
-              <p style={{ fontWeight: 700, fontSize: 14, marginTop: 8 }}>{cat.en}</p>
-              <p style={{ color: "var(--muted)", fontSize: 12, marginTop: 4, lineHeight: 1.4 }}>{cat.description}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ── SUBMIT CTA ─────────────────────────── */}
-      <section style={{
-        maxWidth: 900,
-        margin: "0 auto 4rem",
-        padding: "2rem",
-        background: "var(--accent-light)",
-        borderRadius: 16,
-        textAlign: "center",
-      }}>
-        <p style={{ fontSize: 22, fontWeight: 800, marginBottom: 8 }}>
-          Visited a Seoul clinic? Share what you paid.
-        </p>
-        <p style={{ color: "var(--muted)", marginBottom: 20, fontSize: 15 }}>
-          Your price helps the next person know what to expect — no name required.
-        </p>
-        <Link
-          href="/submit"
-          style={{
-            display: "inline-block",
-            background: "var(--accent)",
-            color: "#fff",
-            padding: "14px 28px",
-            borderRadius: 10,
-            fontWeight: 700,
-            textDecoration: "none",
-            fontSize: 15,
-          }}
-        >
-          Submit a real price →
-        </Link>
-      </section>
-
-      {/* ── COMEDI LINK ────────────────────────── */}
-      <section style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: "0 1rem 3rem",
-        display: "flex",
-        gap: 16,
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderTop: "1px solid var(--border)",
-        paddingTop: "2rem",
-      }}>
-        <div>
-          <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
-            Need help booking the right clinic?
-          </p>
-          <p style={{ color: "var(--muted)", fontSize: 14 }}>
-            COMEDI is a registered Seoul beauty concierge — research, booking and interpretation included.
-          </p>
-        </div>
-        <a
-          href="https://koreabeautyconsultant.com"
-          target="_blank"
-          style={{
-            padding: "12px 20px",
-            border: "2px solid var(--accent)",
-            borderRadius: 10,
-            color: "var(--accent)",
-            fontWeight: 700,
-            textDecoration: "none",
-            fontSize: 14,
-            flexShrink: 0,
-          }}
-        >
-          Visit COMEDI →
-        </a>
-      </section>
-    </div>
+    </>
   );
 }
