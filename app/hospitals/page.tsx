@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ClinicCard from "@/components/ClinicCard";
 import providers from "@/data/registered-providers.json";
 
 export const metadata = {
@@ -7,7 +8,14 @@ export const metadata = {
     "Clinics on the official Medical Korea maintained registry of institutions that may receive foreign patients, by area and field.",
 };
 
-type P = { en: string; ko: string; field: string; area: string };
+type P = {
+  slug: string;
+  en: string;
+  ko: string;
+  field: string;
+  area: string;
+  photo?: boolean;
+};
 const all = providers.items as P[];
 const CHECKED = providers.checked;
 const FIELD: Record<string, string> = {
@@ -21,14 +29,15 @@ const FIELD: Record<string, string> = {
   general: "General & specialist",
 };
 const AREAS = [...new Set(all.map((p) => p.area))].sort();
-const PAGE = 60;
+const PAGE = 30;
 
 type Props = {
-  searchParams: Promise<{ area?: string; field?: string }>;
+  searchParams: Promise<{ area?: string; field?: string; limit?: string }>;
 };
 
 export default async function Hospitals({ searchParams }: Props) {
-  const { area = "", field = "" } = await searchParams;
+  const { area = "", field = "", limit = "" } = await searchParams;
+  const shown = Math.min(Math.max(Number(limit) || PAGE, PAGE), 300);
   const list = all.filter(
     (p) => (!area || p.area === area) && (!field || p.field === field),
   );
@@ -80,21 +89,33 @@ export default async function Hospitals({ searchParams }: Props) {
       </div>
       <p className="note" style={{ marginTop: 16 }} role="status">
         {list.length.toLocaleString("en-US")} providers
-        {list.length > PAGE ? `, first ${PAGE} shown. Narrow by area or field.` : ""}
+        {list.length > shown ? `, first ${shown} shown` : ""}
       </p>
       {list.length === 0 ? (
         <p className="none">No registered provider matches this area and field.</p>
       ) : (
-        <ul className="clinic-list">
-          {list.slice(0, PAGE).map((p) => (
-            <li key={p.ko + p.area}>
-              <strong style={{ fontWeight: 600 }}>{p.en}</strong>
-              <span>
-                {p.area} · {FIELD[p.field]}
-              </span>
-            </li>
+        <ul className="clinic-cards">
+          {list.slice(0, shown).map((p) => (
+            <ClinicCard
+              key={p.slug}
+              slug={p.slug}
+              en={p.en}
+              ko={p.ko}
+              meta={`${p.area} · ${FIELD[p.field]}`}
+              hasPhoto={Boolean(p.photo)}
+            />
           ))}
         </ul>
+      )}
+      {list.length > shown && (
+        <div className="chips">
+          <Link
+            href={`${link(area, field)}${area || field ? "&" : "?"}limit=${shown + PAGE}`}
+            scroll={false}
+          >
+            Show {Math.min(PAGE, list.length - shown)} more
+          </Link>
+        </div>
       )}
     </div>
   );

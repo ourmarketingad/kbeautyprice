@@ -97,6 +97,7 @@ with sync_playwright() as p:
     sample = ["/guides", "/guides/" + guides[4], "/", "/treatments", "/treatments/rejuran", "/treatments/rhinoplasty", "/hospitals", "/submit", "/how-prices-work"]
     for w in (320, 390, 768, 1280, 1440):
         c = br.new_context(viewport={"width": w, "height": 900})
+        c.route("**/api/clinic-photo/**", lambda r: r.fulfill(status=204, body=""))
         for path in sample:
             pg = c.new_page()
             errs = []
@@ -119,6 +120,7 @@ with sync_playwright() as p:
             pg.close()
         c.close()
     c = br.new_context(viewport={"width": 1440, "height": 900})
+    c.route("**/api/clinic-photo/**", lambda r: r.fulfill(status=204, body=""))
     pg = c.new_page()
     seen = set()
     for path in ("/", "/treatments", "/treatments/rejuran", "/hospitals", "/how-prices-work"):
@@ -145,8 +147,43 @@ with sync_playwright() as p:
     check("분류 필터", pg.locator("a[href='/treatments/dermal-filler']").count() == 1 and pg.locator("a[href='/treatments/rejuran']").count() == 0)
     pg.goto(BASE + "/hospitals?area=Myeongdong&field=skin", wait_until="domcontentloaded")
     check("명부 필터", "providers" in pg.inner_text("main") and "Gangnam Station ·" not in pg.inner_text("main"))
+    # 병원 사진: 유료 호출을 막고 가짜 응답으로 시험
+    calls = []
+    cp = br.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+    PIX = "https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png"
+
+    def fake_photo(route):
+        calls.append(route.request.url)
+        n = len(calls)
+        if n % 3 == 0:
+            route.fulfill(status=204, body="")
+        else:
+            route.fulfill(status=200, content_type="application/json", body=json.dumps({"uri": PIX, "authors": [{"name": "Tester", "uri": "https://example.com/a"}]}))
+
+    cp.route("**/api/clinic-photo/**", fake_photo)
+    pc = cp.new_page()
+    pc.goto(BASE + "/hospitals", wait_until="networkidle")
+    pc.wait_for_timeout(800)
+    first = len(calls)
+    total = pc.locator(".clinic-card").count()
+    check("사진은 화면에 든 카드만 요청", 0 < first < total, f"{first}/{total}")
+    check("사진 표시와 출처 표기", pc.locator(".clinic-card img").count() > 0 and "Google" in pc.locator(".clinic-card small").first.inner_text())
+    check("사진 없는 카드는 대체 표시", pc.locator(".clinic-photo > span").count() > 0)
+    hs = pc.evaluate("[...document.querySelectorAll('.clinic-photo')].slice(0,8).map(e=>Math.round(e.getBoundingClientRect().height))")
+    check("병원 사진 높이 일정", len(set(hs)) == 1, str(hs))
+    before = pc.locator(".clinic-card").count()
+    pc.locator("a", has_text="more").last.click()
+    pc.wait_for_timeout(800)
+    check("더 보기로 병원 늘어남", pc.locator(".clinic-card").count() > before)
+    over = pc.evaluate("document.documentElement.scrollWidth-document.documentElement.clientWidth")
+    check("병원 카드 가로 넘침 0", over <= 0, str(over))
+    cp.close()
+    # 서버: 승인 안 된 값은 구글을 부르지 않음
+    st, _ = (lambda r: (r.status, r.read()))(urllib.request.urlopen(BASE + "/api/clinic-photo/not-a-clinic", timeout=20))
+    check("없는 병원 사진 요청 204", st == 204, str(st))
     # 휴대폰 동선: 하단 탭·고정 버튼이 내용을 가리지 않는지
     cm = br.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+    cm.route("**/api/clinic-photo/**", lambda r: r.fulfill(status=204, body=""))
     pm = cm.new_page()
     pm.goto(BASE + "/", wait_until="networkidle")
     check("휴대폰 하단 탭 4개", pm.locator(".tab-bar a").count() == 4)
