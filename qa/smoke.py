@@ -50,7 +50,7 @@ AUDIT = "D:/아워마케팅/OUR-Marketing-KB/80_work/ourmarketing/web/2026-11-06
 CLINICS = sorted({r["clinic"].split(" ")[0] for g in json.load(open(AUDIT, encoding="utf-8")) for r in g["rows"]})
 BANNED = re.compile(r"real visitors|No fake|No ads|Submit a real|\bbest\b|cheapest|★|before and after photos of|guarantee", re.I)
 guides = re.findall(r'slug: "([^"]+)"', open("data/guides.ts", encoding="utf-8").read())
-PAGES = [f"/guides/{g}" for g in guides] + ["/guides", "/", "/treatments", "/how-prices-work", "/hospitals", "/submit", "/privacy", "/terms", "/auth"] + [f"/treatments/{s}" for s in slugs]
+PAGES = [f"/guides/{g}" for g in guides] + ["/for-clinics", "/guides", "/", "/treatments", "/how-prices-work", "/hospitals", "/submit", "/privacy", "/terms", "/auth"] + [f"/treatments/{s}" for s in slugs]
 for p in PAGES:
     st, h = get(p)
     body = re.sub(r"<script.*?</script>|<style.*?</style>", " ", h, flags=re.S)
@@ -87,14 +87,57 @@ for name, patch, want in (
     ("글자 금액", {"krw": "abc"}, "error=missing"),
     ("동의 없음", {"consent": ""}, "error=consent"),
     ("연도 이상", {"year": "1999"}, "error=missing"),
-    ("저장소 없음=실패 표시", {}, "error=server"),
 ):
     st, loc = post({**base, **patch})
     check("접수 " + name, st == 303 and want in loc, f"{st} {loc}")
+if "127.0.0.1" in BASE or "localhost" in BASE:
+    # 운영 주소에서는 실제 저장소에 쓰이므로 정상 접수를 시험하지 않는다
+    st, loc = post(base)
+    check("접수 저장소 없음=실패 표시", st == 303 and "error=server" in loc, f"{st} {loc}")
+
+# 입점 신청 검증(저장 전 단계만)
+def apply(data):
+    body = urllib.parse.urlencode(data).encode()
+    op = urllib.request.build_opener(NoRedirect)
+    try:
+        r = op.open(urllib.request.Request(BASE + "/api/clinic-apply", data=body), timeout=30)
+        return r.status, r.headers.get("location", "")
+    except urllib.error.HTTPError as e:
+        return e.code, e.headers.get("location", "")
+
+
+ab = {"clinic": "Test", "name": "A", "email": "a@example.com", "consent": "yes"}
+for name, patch, want in (
+    ("병원명 없음", {"clinic": ""}, "error=missing"),
+    ("이름 없음", {"name": ""}, "error=missing"),
+    ("메일 형식", {"email": "nope"}, "error=email"),
+    ("전화 형식", {"phone": "abc"}, "error=phone"),
+    ("동의 없음", {"consent": ""}, "error=consent"),
+    ("로봇 칸", {"website": "x", "clinic": ""}, "sent=1"),
+):
+    st, loc = apply({**ab, **patch})
+    check("입점 신청 " + name, st == 303 and want in loc, f"{st} {loc}")
+# 로그인 없이 관리·운영 화면
+for path, want in (("/manage", "/auth"), ("/admin", None)):
+    op = urllib.request.build_opener(NoRedirect)
+    try:
+        r = op.open(BASE + path, timeout=30)
+        code, loc = r.status, ""
+    except urllib.error.HTTPError as e:
+        code, loc = e.code, e.headers.get("location", "")
+    if want:
+        check(path + " 로그인으로 이동", code in (302, 303, 307) and want in loc, f"{code} {loc}")
+    else:
+        check(path + " 비로그인 차단", code in (302, 303, 307, 404), str(code))
+try:
+    get("/clinics/not-a-clinic")
+    check("없는 병원 쪽 404", False)
+except urllib.error.HTTPError as e:
+    check("없는 병원 쪽 404", e.code == 404)
 
 with sync_playwright() as p:
     br = p.chromium.launch()
-    sample = ["/guides", "/guides/" + guides[4], "/", "/treatments", "/treatments/rejuran", "/treatments/rhinoplasty", "/hospitals", "/submit", "/how-prices-work"]
+    sample = ["/for-clinics", "/guides", "/guides/" + guides[4], "/", "/treatments", "/treatments/rejuran", "/treatments/rhinoplasty", "/hospitals", "/submit", "/how-prices-work"]
     for w in (320, 390, 768, 1280, 1440):
         c = br.new_context(viewport={"width": w, "height": 900})
         c.route("**/api/clinic-photo/**", lambda r: r.fulfill(status=204, body=""))
@@ -230,6 +273,9 @@ with sync_playwright() as p:
     check("제목 왼쪽 여백 16px 이상(1440)", min(pad) >= 16, str(min(pad)))
     check("숫자 띠 글자 읽힘", "₩" in pg.locator(".odo .sr-only").first.inner_text())
     # 폼: 동의 칸 비어 있음, 빈 제출 막힘
+    pg.goto(BASE + "/for-clinics", wait_until="networkidle")
+    check("입점 동의 칸 비어 있음", not pg.is_checked("input[name=consent]"))
+    check("트래픽 약속 없음", "no traffic figures" in pg.inner_text("main"))
     pg.goto(BASE + "/submit?treatment=rejuran", wait_until="networkidle")
     check("시술 미리 선택", pg.input_value("#treatment") == "rejuran")
     check("동의 칸 비어 있음", not pg.is_checked("input[name=consent]"))

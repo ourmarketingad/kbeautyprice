@@ -47,6 +47,7 @@ export default function RootLayout({
             <div className="foot-links">
               <Link href="/how-prices-work">How prices work</Link>
               <Link href="/submit">Report a price</Link>
+              <Link href="/for-clinics">For clinics</Link>
               <Link href="/privacy">Privacy</Link>
               <Link href="/terms">Terms</Link>
             </div>

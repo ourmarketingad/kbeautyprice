@@ -4,6 +4,12 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
+// 다른 사이트로 넘어가지 않도록 우리 안쪽 경로만 받는다.
+function safeNext() {
+  const n = new URLSearchParams(location.search).get("next") ?? "";
+  return /^\/[a-z-]+$/.test(n) ? n : "/my-submissions";
+}
+
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("signup");
   const [email, setEmail] = useState("");
@@ -22,7 +28,7 @@ export default function AuthPage() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${location.origin}/auth/callback` },
+        options: { emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(safeNext())}` },
       });
       if (error) {
         setMessage({ text: error.message, ok: false });
@@ -34,7 +40,7 @@ export default function AuthPage() {
       if (error) {
         setMessage({ text: error.message, ok: false });
       } else {
-        router.push("/my-submissions");
+        router.push(safeNext());
         router.refresh();
       }
     }
