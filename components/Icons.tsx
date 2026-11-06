@@ -44,11 +44,11 @@ export function Logo({ light = false }: { light?: boolean }) {
   return (
     <span className={light ? "logo logo-light" : "logo"}>
       <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
-        <rect width="26" height="26" rx="7" fill={light ? "#fff" : "#1b64da"} />
+        <rect width="26" height="26" rx="7" fill={light ? "#fff" : "#c8364f"} />
         <path
           d="M6.500 8l3.200 10L13 10l3.300 8 3.200-10M5.500 12.500h15M5.500 15h15"
           fill="none"
-          stroke={light ? "#1b64da" : "#fff"}
+          stroke={light ? "#c8364f" : "#fff"}
           strokeWidth="1.700"
           strokeLinecap="round"
           strokeLinejoin="round"
