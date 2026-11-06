@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Odometer } from "@/components/Motion";
 import QuoteBar from "@/components/QuoteBar";
 import { treatmentImage } from "@/lib/images";
+import { publishedItemsFor } from "@/lib/listing";
 import { categories } from "@/data/categories";
 import { treatments } from "@/data/treatments";
 import {
@@ -21,6 +22,7 @@ import {
 type Props = { params: Promise<{ slug: string }> };
 
 export const dynamicParams = false;
+export const revalidate = 300;
 export const generateStaticParams = () =>
   treatments.map((t) => ({ slug: t.slug }));
 
@@ -41,6 +43,7 @@ export default async function TreatmentPage({ params }: Props) {
   const t = treatments.find((x) => x.slug === slug);
   if (!t) notFound();
   const rows = pricesFor(slug);
+  const listed = await publishedItemsFor(slug);
   const cat = categories.find((c) => c.slug === t.category);
   const related = treatments
     .filter((x) => x.category === t.category && x.slug !== slug)
@@ -114,6 +117,31 @@ export default async function TreatmentPage({ params }: Props) {
         Your price depends on the clinic, product and plan.{" "}
         <Link href="/how-prices-work">How we collect prices</Link>
       </p>
+
+      {listed.length > 0 && (
+        <section className="section" aria-labelledby="clinic-listed">
+          <h2 id="clinic-listed">Prices provided by clinics</h2>
+          <p className="note">
+            Advertising information from listed clinics, sorted by item name. Not part
+            of the ranges above and not a recommendation.
+          </p>
+          <ul className="price-panels">
+            {listed.map((i) => (
+              <li key={i.id}>
+                <Link className="price-row" href={`/clinics/${i.clinics.slug}`}>
+                  <span className="price-name">
+                    {i.title}
+                    <span className="price-spec">
+                      {i.clinics.name_en} · {i.kind === "event" ? "Event price" : "Listed price"}
+                    </span>
+                  </span>
+                  <span className="price-val">{won(i.price_krw)}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="section" aria-labelledby="quote-check">
         <h2 id="quote-check">What to check on a written quote</h2>

@@ -1359,3 +1359,15 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* 입점: 본문 목록 점 제거, 행사 칸은 행사 가격을 고를 때만 */
+.narrow .price-panels {
+  list-style: none;
+  padding-left: 0;
+}
+.event-fields {
+  display: none;
+}
+.form:has(select[name="kind"] option[value="event"]:checked) .event-fields {
+  display: block;
+}

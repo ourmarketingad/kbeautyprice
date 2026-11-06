@@ -12,6 +12,7 @@ export default function Privacy() {
       <ul>
         <li>Price reports: treatment, amount, price, year and any notes you write.</li>
         <li>If you create an account: your email address and the reports linked to it.</li>
+        <li>Clinic applications: clinic name, contact name, work email, phone and your message.</li>
       </ul>
       <p>You do not need an account to report a price. Please do not write names, phone numbers or health details in notes.</p>
       <h2>Why</h2>
