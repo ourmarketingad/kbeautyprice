@@ -849,7 +849,7 @@ body {
 }
 @media (min-width: 900px) {
   .proof {
-    grid-template-columns: repeat(3, minmax(0, 180px)) 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: stretch;
   }
   .proof a {
@@ -1568,6 +1568,191 @@ body {
     grid-template-columns: 1fr 1fr;
   }
   .price-facts > div:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* 레퍼런스 세 가지 (2026-11-06): Zocdoc 검색 상자 · Wise 계산기 · Midi 버튼 두 단계 · Heyday 제목 한 단어 강조 */
+.word-title .mark {
+  color: var(--accent);
+}
+.hero-grid {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 900px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+    gap: 40px;
+    align-items: start;
+  }
+}
+.hero-main {
+  min-width: 0;
+}
+.search-card {
+  margin-top: 16px;
+  max-width: 640px;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(40, 20, 26, 0.06);
+}
+.search-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.search-card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+}
+.search-card-row:focus-within {
+  border-color: var(--accent);
+}
+.search-card-row input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 14px 0;
+  font-size: 16px;
+  color: var(--fg);
+  outline: none;
+}
+.search-card-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+}
+.pop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.pop a {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--fg);
+  text-decoration: none;
+}
+.pop a:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+.calc {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  background: var(--accent-light);
+  border-radius: 18px;
+  align-content: start;
+  min-width: 0;
+}
+.calc-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+.calc-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.calc-select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1px solid #f0c3cc;
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.calc-select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.calc-out {
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  background: var(--bg);
+  border-radius: 14px;
+}
+.calc-spec {
+  font-size: 13px;
+  color: var(--muted);
+}
+.calc-val {
+  font-size: clamp(22px, 6vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
+}
+.calc-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 8px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.calc-facts dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.calc-facts dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.calc-vat {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.btn-pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.btn-pair .btn,
+.btn-pair .btn-line {
+  flex: 1 1 160px;
+}
+.btn-line {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border: 1.5px solid var(--accent);
+  border-radius: 12px;
+  color: var(--accent-strong);
+  font-weight: 600;
+  text-decoration: none;
+  background: transparent;
+}
+.btn-line:hover {
+  background: var(--bg);
+}
+@media (max-width: 440px) {
+  .calc-facts {
+    grid-template-columns: 1fr 1fr;
+  }
+  .calc-facts > div:first-child {
     grid-column: 1 / -1;
   }
 }

@@ -80,7 +80,8 @@ export function Odometer({ value }: { value: string }) {
 }
 
 /** WL-20: 어절 단위로 0.03초 간격, 0.28em 떠오름 */
-export function WordTitle({ text }: { text: string }) {
+/** mark: 코랄로 강조할 단어 하나(Heyday식 제목 속 한 단어 강조). */
+export function WordTitle({ text, mark }: { text: string; mark?: string }) {
   const [on, setOn] = useState(false);
   useEffect(() => {
     if (reduced()) return;
@@ -92,6 +93,7 @@ export function WordTitle({ text }: { text: string }) {
         <span
           key={i}
           aria-hidden="true"
+          className={mark && w.replace(/[^\w]/g, "") === mark ? "mark" : undefined}
           style={{ animationDelay: `${i * 30}ms` }}
         >
           {w}{" "}
