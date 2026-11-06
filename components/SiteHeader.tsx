@@ -10,7 +10,7 @@ export default function SiteHeader() {
     <header className={home ? "site-head on-brand" : "site-head"}>
       <div className="site-head-in">
         <Link href="/" className="brand" aria-label="KBeautyPrice home">
-          <Logo light={home} />
+          <Logo />
         </Link>
         <nav className="site-nav" aria-label="Main">
           <Link className="desk" href="/treatments">
