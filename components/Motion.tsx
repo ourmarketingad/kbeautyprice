@@ -112,3 +112,51 @@ export function DrawLine() {
     />
   );
 }
+
+/** RL-95 변형: 가격 범위 막대. 평소(첫 그림·움직임 줄이기)엔 다 그려진 막대.
+ *  화면에 들어오면 왼쪽에서 520ms 동안 자라고, 순서(order)마다 48ms씩 늦게 시작한다. */
+export function RangeBar({
+  low,
+  high,
+  min,
+  max,
+  kind,
+  order = 0,
+}: {
+  low: number;
+  high: number;
+  min: number;
+  max: number;
+  kind: "list" | "event";
+  order?: number;
+}) {
+  const [ref, seen] = useSeen<HTMLDivElement>(0.5);
+  const [phase, setPhase] = useState<"plain" | "armed" | "run">("plain");
+  useEffect(() => {
+    if (!seen || reduced()) return;
+    setPhase("armed");
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => setPhase("run")),
+    );
+    return () => cancelAnimationFrame(raf);
+  }, [seen]);
+  const span = Math.max(max - min, 1);
+  const left = ((low - min) / span) * 100;
+  const width = Math.max(((high - low) / span) * 100, 2);
+  return (
+    <div ref={ref} className="range-bar" aria-hidden="true">
+      <span
+        className={kind === "event" ? "range-fill event" : "range-fill"}
+        style={{
+          left: `${left}%`,
+          width: `${width}%`,
+          transform: phase === "armed" ? "scaleX(0)" : "scaleX(1)",
+          transition:
+            phase === "run"
+              ? `transform 520ms cubic-bezier(0.33, 1, 0.68, 1) ${order * 48}ms`
+              : "none",
+        }}
+      />
+    </div>
+  );
+}

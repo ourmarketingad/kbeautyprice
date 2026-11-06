@@ -1426,3 +1426,148 @@ body {
 .form:has(select[name="kind"] option[value="event"]:checked) .event-fields {
   display: block;
 }
+
+/* 시술 상세 2차 (2026-11-06): 머리 2단, 답 먼저 한 줄, 범위 막대(RL-95 변형), 사실 칸, 자주 묻는 질문 */
+.detail-answer {
+  display: grid;
+  gap: 2px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--accent-light);
+  border-radius: 14px;
+}
+.detail-answer span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.detail-answer strong {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
+}
+.range-bar {
+  position: relative;
+  height: 8px;
+  margin: 12px 0 4px;
+  background: #eceef2;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.range-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  background: var(--accent);
+  transform-origin: left center;
+}
+.range-fill.event {
+  background: #d08a1e;
+}
+.range-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.price-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.price-facts dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.price-facts dd {
+  margin: 2px 0 0;
+  white-space: nowrap;
+  font-size: clamp(12px, 3.6vw, 14px);
+  font-size: 14px;
+  font-weight: 600;
+}
+.faq {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.faq details {
+  background: #f7f8fa;
+  border-radius: 12px;
+  padding: 0 16px;
+}
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 24px 14px 0;
+  font-weight: 600;
+  position: relative;
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary::after {
+  content: "+";
+  position: absolute;
+  right: 0;
+  top: 12px;
+  font-size: 20px;
+  color: var(--accent);
+}
+.faq details[open] summary::after {
+  content: "−";
+}
+.faq summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.faq p {
+  padding: 0 0 14px;
+  color: var(--muted);
+  font-size: 15px;
+}
+@media (max-width: 760px) {
+  .detail > .detail-head:not(.detail-hero):not(.quote-bar) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .detail-intro {
+    margin: 0 16px;
+  }
+  .detail .detail-hero {
+    aspect-ratio: 16 / 9;
+  }
+}
+@media (min-width: 761px) {
+  .detail-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+    gap: 40px;
+    align-items: center;
+    margin-top: 24px;
+  }
+  .detail-head .detail-hero {
+    order: 2;
+    margin: 0;
+    max-width: none;
+  }
+  .detail-intro {
+    order: 1;
+    min-width: 0;
+  }
+}
+@media (max-width: 360px) {
+  .price-facts {
+    grid-template-columns: 1fr 1fr;
+  }
+  .price-facts > div:first-child {
+    grid-column: 1 / -1;
+  }
+}
