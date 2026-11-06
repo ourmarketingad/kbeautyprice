@@ -807,6 +807,60 @@ body {
   max-width: 17em;
   text-wrap: balance;
 }
+.proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 14px 0 4px;
+  background: var(--accent-light);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.proof > div {
+  padding: 12px 14px;
+  background: var(--accent-light);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+}
+.proof > div + div {
+  border-left: 1px solid #f6d3da;
+}
+.proof dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.proof dd {
+  margin: 0;
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
+}
+.proof a {
+  grid-column: 1 / -1;
+  padding: 10px 14px;
+  border-top: 1px solid #f6d3da;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-strong);
+  text-decoration: none;
+}
+@media (min-width: 900px) {
+  .proof {
+    grid-template-columns: repeat(3, minmax(0, 180px)) 1fr;
+    align-items: stretch;
+  }
+  .proof a {
+    grid-column: auto;
+    border-top: 0;
+    border-left: 1px solid #f6d3da;
+    display: flex;
+    align-items: center;
+    background: var(--accent-light);
+  }
+}
 .search-pill {
   display: flex;
   align-items: center;
@@ -873,7 +927,7 @@ body {
   display: block;
   font-size: 14px;
   line-height: 1.45;
-  background: linear-gradient(180deg, rgba(20, 22, 26, 0) 0, rgba(20, 22, 26, 0.86) 58%);
+  background: linear-gradient(180deg, rgba(46, 24, 30, 0) 0, rgba(46, 24, 30, 0.84) 58%);
 }
 .feat-card em {
   display: block;
@@ -925,7 +979,7 @@ body {
 .section > h2,
 .sec-head h2,
 .h2 {
-  font-size: 20px;
+  font-size: clamp(21px, 2.4vw, 28px);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.3;

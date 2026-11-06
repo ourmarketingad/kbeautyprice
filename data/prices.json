@@ -1,6 +1,11 @@
 {
  "collected": "2026-11-06",
  "krwPerUsd": 1400,
+ "evidence": {
+  "prices": 134,
+  "clinics": 17,
+  "pages": 49
+ },
  "items": [
   {
    "slug": "ultherapy",
