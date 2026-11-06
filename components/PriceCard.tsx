@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Odometer } from "@/components/Motion";
 import { treatmentImage } from "@/lib/images";
-import { usd, won, range, type PriceRow } from "@/lib/prices";
+import { usd, won, range, VAT_LABEL, type PriceRow } from "@/lib/prices";
 
 export default function PriceCard({
   slug,
@@ -41,6 +41,8 @@ export default function PriceCard({
               <span className="card-usd">≈ {range(row.low, row.high, usd)}</span>
               <span className="card-meta">
                 <b>{row.clinics} clinics</b> published this
+                <br />
+                {VAT_LABEL[row.vat] ?? VAT_LABEL.unknown}
               </span>
             </>
           ) : (

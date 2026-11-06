@@ -7,7 +7,7 @@ import { categories } from "@/data/categories";
 import { guides } from "@/data/guides";
 import { treatments } from "@/data/treatments";
 import { guideImage } from "@/lib/images";
-import { COLLECTED, PRICES } from "@/lib/prices";
+import { COLLECTED, EVIDENCE, PRICES } from "@/lib/prices";
 
 const withData = new Set(PRICES.map((p) => p.slug));
 const FEATURES = [
@@ -68,6 +68,29 @@ export default function HomePage() {
               <Icon name="search" size={22} />
             </button>
           </form>
+        </div>
+        <div className="wrap">
+        <dl className="proof">
+          <div>
+            <dt>Prices read</dt>
+            <dd>{EVIDENCE.prices}</dd>
+          </div>
+          <div>
+            <dt>Clinic websites</dt>
+            <dd>{EVIDENCE.clinics}</dd>
+          </div>
+          <div>
+            <dt>Last checked</dt>
+            <dd>
+              {new Date(COLLECTED + "T00:00:00Z").toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                timeZone: "UTC",
+              })}
+            </dd>
+          </div>
+          <Link href="/how-prices-work">How we collect prices</Link>
+        </dl>
         </div>
         <div className="feat" aria-label="Featured">
           {FEATURES.map((f) => (

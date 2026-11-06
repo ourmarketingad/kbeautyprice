@@ -17,6 +17,8 @@ export type PriceRow = {
 export const PRICES = data.items as PriceRow[];
 export const COLLECTED: string = data.collected;
 export const KRW_PER_USD: number = data.krwPerUsd;
+/** 근거 규모: 읽은 가격 수·병원 수·병원 페이지 수(병원 이름은 공개 데이터에 없다). */
+export const EVIDENCE: { prices: number; clinics: number; pages: number } = data.evidence;
 export const MIN_CLINICS = 3;
 
 export const pricesFor = (slug: string) =>
