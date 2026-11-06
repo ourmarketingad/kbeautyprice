@@ -323,9 +323,14 @@ export default async function TreatmentPage({ params }: Props) {
               Clinics may pay COMEDI a referral fee, explained in writing before
               you book.
             </p>
-            <a className="btn" href={COMEDI_QUOTE}>
-              Ask COMEDI
-            </a>
+            <span className="btn-pair">
+              <a className="btn" href={COMEDI_QUOTE}>
+                Ask COMEDI
+              </a>
+              <Link className="btn-line" href="/how-prices-work">
+                How prices work
+              </Link>
+            </span>
           </div>
         </section>
       )}

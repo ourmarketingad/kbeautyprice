@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icon } from "@/components/Icons";
 import { DrawLine, WordTitle } from "@/components/Motion";
 import PriceCard from "@/components/PriceCard";
+import PriceCheck from "@/components/PriceCheck";
 import { LINE_JA, LINE_TW, WHATSAPP } from "@/components/QuoteBar";
 import { categories } from "@/data/categories";
 import { guides } from "@/data/guides";
@@ -40,6 +41,14 @@ export default function HomePage() {
       p.kind === "list" &&
       all.findIndex((x) => x.slug === p.slug && x.kind === "list") === i,
   ).slice(0, 8);
+  const calcOptions = treatments.flatMap((t) => {
+    const row = PRICES.find((p) => p.slug === t.slug && p.kind === "list");
+    return row ? [{ slug: t.slug, name: t.en, row }] : [];
+  });
+  const popular = treatments
+    .filter((t) => t.popularityRank && withData.has(t.slug))
+    .sort((a, b) => (a.popularityRank ?? 99) - (b.popularityRank ?? 99))
+    .slice(0, 4);
   const cats = categories.filter((c) =>
     treatments.some((t) => t.category === c.slug),
   );
@@ -47,27 +56,38 @@ export default function HomePage() {
     <>
       <section className="top-band">
         <div className="wrap">
-          <WordTitle text="Seoul clinic prices, with the source on every number." />
-          <form
-            action="/treatments"
-            method="get"
-            className="search-pill"
-            role="search"
-          >
-            <label className="sr-only" htmlFor="q">
-              Search treatments
-            </label>
-            <input
-              id="q"
-              name="q"
-              type="search"
-              placeholder="Ultherapy, jaw botox, 리쥬란"
-              autoComplete="off"
-            />
-            <button type="submit" aria-label="Search">
-              <Icon name="search" size={22} />
-            </button>
-          </form>
+          <div className="hero-grid">
+            <div className="hero-main">
+              <WordTitle text="Seoul clinic prices, with the source on every number." mark="source" />
+              {/* Zocdoc식 큰 검색 상자: 입력 + 넓은 버튼 + 많이 찾는 시술 칩 */}
+              <form action="/treatments" method="get" className="search-card" role="search">
+                <label className="search-card-label" htmlFor="q">
+                  What treatment?
+                </label>
+                <div className="search-card-row">
+                  <Icon name="search" size={20} />
+                  <input
+                    id="q"
+                    name="q"
+                    type="search"
+                    placeholder="Ultherapy, jaw botox, 리쥬란"
+                    autoComplete="off"
+                  />
+                </div>
+                <button type="submit" className="btn search-card-btn">
+                  Find prices
+                </button>
+              </form>
+              <nav className="pop" aria-label="Often searched">
+                {popular.map((t) => (
+                  <Link key={t.slug} href={`/treatments/${t.slug}`}>
+                    {t.en}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+            <PriceCheck options={calcOptions} />
+          </div>
         </div>
         <div className="wrap">
         <dl className="proof">
@@ -89,7 +109,6 @@ export default function HomePage() {
               })}
             </dd>
           </div>
-          <Link href="/how-prices-work">How we collect prices</Link>
         </dl>
         </div>
         <div className="feat" aria-label="Featured">
