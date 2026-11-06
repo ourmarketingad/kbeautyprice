@@ -29,14 +29,16 @@ export default async function TreatmentsPage({ searchParams }: Props) {
     )
     .sort((a, b) => Number(hasPrices(b.slug)) - Number(hasPrices(a.slug)));
   return (
-    <div className="wrap page-top">
+    <>
+    <section className="band">
+      <div className="wrap">
       <h1 className="page-title">
         Treatment prices in Seoul
       </h1>
       <p className="sub">
         From clinics&apos; own websites, checked {COLLECTED}.
       </p>
-      <form action="/treatments" method="get" className="search" role="search">
+      <form action="/treatments" method="get" className="search band-form" role="search">
         <label className="sr-only" htmlFor="tq">
           Search treatments
         </label>
@@ -52,6 +54,10 @@ export default async function TreatmentsPage({ searchParams }: Props) {
           Search
         </button>
       </form>
+      </div>
+    </section>
+    <div className="sheet">
+    <div className="wrap">
       <div className="hscroll flush">
         <Link href="/treatments" aria-current={!category ? "true" : undefined}>
           All
@@ -89,5 +95,7 @@ export default async function TreatmentsPage({ searchParams }: Props) {
         </ul>
       )}
     </div>
+    </div>
+    </>
   );
 }

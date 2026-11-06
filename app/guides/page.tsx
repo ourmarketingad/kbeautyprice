@@ -10,13 +10,19 @@ export const metadata = {
 
 export default function Guides() {
   return (
-    <div className="wrap page-top">
-      <h1 className="page-title">Guides</h1>
-      <p className="sub">
-        Short answers on prices and quotes. These guides cover costs, not
-        medical advice.
-      </p>
-      <ul className="guide-list">
+    <>
+    <section className="band">
+      <div className="wrap">
+        <h1 className="page-title">Guides</h1>
+        <p className="sub">
+          Short answers on prices and quotes. These guides cover costs, not
+          medical advice.
+        </p>
+      </div>
+    </section>
+    <div className="sheet">
+    <div className="wrap">
+      <ul className="guide-cards">
         {guides.map((g) => (
           <li key={g.slug}>
             <Link href={`/guides/${g.slug}`}>
@@ -30,5 +36,7 @@ export default function Guides() {
         ))}
       </ul>
     </div>
+    </div>
+    </>
   );
 }
