@@ -153,6 +153,26 @@ export default async function TreatmentPage({ params }: Props) {
   };
 
   return (
+    <>
+    <section className="band band-detail">
+      <div className="wrap">
+        <p className="note">
+          <Link href="/treatments">Prices</Link>
+          {cat && (
+            <>
+              {" · "}
+              <Link href={`/treatments?category=${cat.slug}`}>{cat.en}</Link>
+            </>
+          )}
+        </p>
+        <h1 className="detail-title">{t.en} price in Seoul</h1>
+        <p className="sub">
+          <span lang="ko">{t.ko}</span> · <span lang="ja">{t.ja}</span> ·{" "}
+          <span lang="zh-Hant">{t["zh-TW"]}</span>
+        </p>
+      </div>
+    </section>
+    <div className="sheet">
     <div className="wrap detail has-quote-bar">
       <script
         type="application/ld+json"
@@ -167,20 +187,6 @@ export default async function TreatmentPage({ params }: Props) {
           height={480}
         />
         <div className="detail-intro">
-          <p className="note">
-            <Link href="/treatments">Prices</Link>
-            {cat && (
-              <>
-                {" · "}
-                <Link href={`/treatments?category=${cat.slug}`}>{cat.en}</Link>
-              </>
-            )}
-          </p>
-          <h1 className="detail-title">{t.en} price in Seoul</h1>
-          <p className="sub">
-            <span lang="ko">{t.ko}</span> · <span lang="ja">{t.ja}</span> ·{" "}
-            <span lang="zh-Hant">{t["zh-TW"]}</span>
-          </p>
           {lead && (
             <p className="detail-answer">
               <span>{lead.spec}</span>
@@ -386,5 +392,7 @@ export default async function TreatmentPage({ params }: Props) {
       </section>
       <QuoteBar treatment={t.en} />
     </div>
+    </div>
+    </>
   );
 }

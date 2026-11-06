@@ -1,50 +1,30 @@
+// 첫 화면 — 시안 B(2026-11-06 대표 선택): 코랄 머리 띠 + 흰 검색 → 위로 겹치는 흰 판(아이콘 타일·가격 카드 띠·계산기·글)
+// 옛 첫 화면 내용은 모두 남겼다: 검색·많이 찾는 시술·계산기·근거 숫자·분류·가격·글·세 가지 가격·상담. 옛 사진 카드 3장은 가격 띠·글·제보 칸으로 옮겼다.
 import Link from "next/link";
 import { Icon } from "@/components/Icons";
-import { DrawLine, WordTitle } from "@/components/Motion";
-import PriceCard from "@/components/PriceCard";
+import { Odometer, WordTitle } from "@/components/Motion";
 import PriceCheck from "@/components/PriceCheck";
 import { LINE_JA, LINE_TW, WHATSAPP } from "@/components/QuoteBar";
 import { categories } from "@/data/categories";
 import { guides } from "@/data/guides";
 import { treatments } from "@/data/treatments";
-import { guideImage } from "@/lib/images";
-import { COLLECTED, EVIDENCE, PRICES } from "@/lib/prices";
+import { guideImage, treatmentImage } from "@/lib/images";
+import { COLLECTED, EVIDENCE, PRICES, VAT_LABEL, range, usd, won } from "@/lib/prices";
 
-const withData = new Set(PRICES.map((p) => p.slug));
-const FEATURES = [
-  {
-    href: "/treatments/ultherapy",
-    img: "/img/lifting.webp",
-    kicker: "Published prices",
-    title: "Ultherapy, 300 shots",
-    text: "What Seoul clinics show on their own websites",
-  },
-  {
-    href: "/guides/what-a-written-quote-should-include",
-    img: "/img/hero-quote.webp",
-    kicker: "Guide",
-    title: "What belongs on a written quote",
-    text: "The checklist before you agree to anything",
-  },
-  {
-    href: "/submit",
-    img: "/img/hero-report.webp",
-    kicker: "Help others",
-    title: "Paid in Korea? Report it",
-    text: "No name needed. Published after five reports",
-  },
-];
+const checked = new Date(COLLECTED + "T00:00:00Z").toLocaleDateString("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
 
 export default function HomePage() {
-  const rows = PRICES.filter(
-    (p, i, all) =>
-      p.kind === "list" &&
-      all.findIndex((x) => x.slug === p.slug && x.kind === "list") === i,
-  ).slice(0, 8);
-  const calcOptions = treatments.flatMap((t) => {
+  const listed = treatments.flatMap((t) => {
     const row = PRICES.find((p) => p.slug === t.slug && p.kind === "list");
-    return row ? [{ slug: t.slug, name: t.en, row }] : [];
+    return row ? [{ t, row }] : [];
   });
+  const withData = new Set(listed.map((x) => x.t.slug));
+  const calcOptions = listed.map(({ t, row }) => ({ slug: t.slug, name: t.en, row }));
   const popular = treatments
     .filter((t) => t.popularityRank && withData.has(t.slug))
     .sort((a, b) => (a.popularityRank ?? 99) - (b.popularityRank ?? 99))
@@ -54,184 +34,180 @@ export default function HomePage() {
   );
   return (
     <>
-      <section className="top-band">
+      <section className="band band-home">
         <div className="wrap">
-          <div className="hero-grid">
-            <div className="hero-main">
-              <WordTitle text="Seoul clinic prices, with the source on every number." mark="source" />
-              {/* Zocdoc식 큰 검색 상자: 입력 + 넓은 버튼 + 많이 찾는 시술 칩 */}
-              <form action="/treatments" method="get" className="search-card" role="search">
-                <label className="search-card-label" htmlFor="q">
-                  What treatment?
-                </label>
-                <div className="search-card-row">
-                  <Icon name="search" size={20} />
-                  <input
-                    id="q"
-                    name="q"
-                    type="search"
-                    placeholder="Ultherapy, jaw botox, 리쥬란"
-                    autoComplete="off"
-                  />
-                </div>
-                <button type="submit" className="btn search-card-btn">
-                  Find prices
-                </button>
-              </form>
-              <nav className="pop" aria-label="Often searched">
-                {popular.map((t) => (
-                  <Link key={t.slug} href={`/treatments/${t.slug}`}>
-                    {t.en}
-                  </Link>
-                ))}
-              </nav>
+          <WordTitle text="Clinic prices in Seoul, checked for you" />
+          <form action="/treatments" method="get" className="band-search" role="search">
+            <label className="sr-only" htmlFor="q">
+              Search treatments
+            </label>
+            <Icon name="search" size={20} />
+            <input
+              id="q"
+              name="q"
+              type="search"
+              placeholder="Ultherapy, jaw botox, 리쥬란"
+              autoComplete="off"
+            />
+            <button type="submit">Search</button>
+          </form>
+          <nav className="band-pop" aria-label="Often searched">
+            {popular.map((t) => (
+              <Link key={t.slug} href={`/treatments/${t.slug}`}>
+                {t.en}
+              </Link>
+            ))}
+          </nav>
+          <dl className="band-proof">
+            <div>
+              <dt>Prices read</dt>
+              <dd>{EVIDENCE.prices}</dd>
             </div>
+            <div>
+              <dt>Clinic websites</dt>
+              <dd>{EVIDENCE.clinics}</dd>
+            </div>
+            <div>
+              <dt>Checked</dt>
+              <dd>{checked}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <div className="sheet">
+        <div className="wrap">
+          <nav className="tiles" aria-label="Treatment categories">
+            {/* 휴대폰 4칸 × 2줄이 꽉 차게: 분류 7개 + 전체 */}
+            {cats.slice(0, 7).map((c) => (
+              <Link key={c.slug} href={`/treatments?category=${c.slug}`}>
+                <span>
+                  <Icon name={c.slug} size={26} />
+                </span>
+                {c.en}
+              </Link>
+            ))}
+            <Link href="/treatments">
+              <span>
+                <Icon name="arrow" size={26} />
+              </span>
+              All prices
+            </Link>
+          </nav>
+
+          <section aria-labelledby="ranges">
+            <div className="sec-row">
+              <h2 id="ranges">Published prices</h2>
+              <Link href="/treatments">See all</Link>
+            </div>
+            <p className="sec-sub">
+              {listed.length} treatments · three clinics or more · listed prices on clinic websites
+            </p>
+            <ul className="rail">
+              {listed.map(({ t, row }, i) => (
+                <li key={t.slug}>
+                  <Link href={`/treatments/${t.slug}`} className="rail-card">
+                    <img
+                      src={treatmentImage(t.slug)}
+                      alt=""
+                      width={640}
+                      height={480}
+                      loading={i > 2 ? "lazy" : "eager"}
+                    />
+                    <span className="rail-body">
+                      <span className="rail-name">{row.spec}</span>
+                      <span className="rail-ko" lang="ko">{t.ko}</span>
+                      <strong>
+                        <Odometer value={won(row.low)} />
+                      </strong>
+                      <span className="rail-to">to {won(row.high)}</span>
+                      <span className="rail-meta">
+                        ≈ {range(row.low, row.high, usd)} · {row.clinics} clinics
+                        <br />
+                        {VAT_LABEL[row.vat] ?? VAT_LABEL.unknown}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <div className="home-calc">
             <PriceCheck options={calcOptions} />
           </div>
-        </div>
-        <div className="wrap">
-        <dl className="proof">
-          <div>
-            <dt>Prices read</dt>
-            <dd>{EVIDENCE.prices}</dd>
-          </div>
-          <div>
-            <dt>Clinic websites</dt>
-            <dd>{EVIDENCE.clinics}</dd>
-          </div>
-          <div>
-            <dt>Last checked</dt>
-            <dd>
-              {new Date(COLLECTED + "T00:00:00Z").toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "short",
-                timeZone: "UTC",
-              })}
-            </dd>
-          </div>
-        </dl>
-        </div>
-        <div className="feat" aria-label="Featured">
-          {FEATURES.map((f) => (
-            <Link key={f.href} href={f.href} className="feat-card">
-              <img src={f.img} alt="" width={640} height={480} />
-              <span>
-                <em>{f.kicker}</em>
-                <strong>{f.title}</strong>
-                {f.text}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
 
-      <nav className="cats wrap" aria-label="Treatment categories">
-        {cats.map((c) => (
-          <Link key={c.slug} href={`/treatments?category=${c.slug}`}>
-            <span>
-              <Icon name={c.slug} size={26} />
-            </span>
-            {c.en}
-          </Link>
-        ))}
-      </nav>
+          <section aria-labelledby="guides">
+            <div className="sec-row">
+              <h2 id="guides">Read before you book</h2>
+              <Link href="/guides">All guides</Link>
+            </div>
+            <ul className="guide-cards">
+              {guides.slice(0, 3).map((g) => (
+                <li key={g.slug}>
+                  <Link href={`/guides/${g.slug}`}>
+                    <span>
+                      <span className="guide-group">{g.group}</span>
+                      <strong>{g.title}</strong>
+                    </span>
+                    <img src={guideImage(g.slug)} alt="" width={640} height={480} loading="lazy" />
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href="/submit" className="report-card">
+                  <span>
+                    <span className="guide-group">Help others</span>
+                    <strong>Paid in Korea? Report what you paid</strong>
+                    <span className="report-sub">No name needed. Published after five reports.</span>
+                  </span>
+                  <img src="/img/hero-report.webp" alt="" width={640} height={480} loading="lazy" />
+                </Link>
+              </li>
+            </ul>
+          </section>
 
-      <section className="section wrap" aria-labelledby="ranges">
-        <div className="sec-head">
-          <h2 id="ranges">Published prices</h2>
-          <Link href="/treatments" aria-label="See all prices">
-            <Icon name="arrow" size={20} />
-          </Link>
+          <section aria-labelledby="kinds">
+            <div className="sec-row">
+              <h2 id="kinds">Three prices, three meanings</h2>
+            </div>
+            <div className="kinds">
+              <div>
+                <h3>Listed price</h3>
+                <p>The clinic&apos;s regular or pre-discount price on its page.</p>
+              </div>
+              <div>
+                <h3>Event price</h3>
+                <p>Limited by date or by who qualifies. We keep it separate.</p>
+              </div>
+              <div className="kinds-key">
+                <h3>Your written quote</h3>
+                <p>What a clinic proposes for you, item by item. This one counts.</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="cta-dark home-cta">
+            <h2>Want a number for your own plan?</h2>
+            <p>
+              COMEDI, run by the same company, can ask a clinic for a written
+              quote. Clinics may pay COMEDI a referral fee, explained in writing
+              before you book.
+            </p>
+            <div>
+              <a className="btn" href={WHATSAPP}>
+                <Icon name="chat" size={18} /> WhatsApp
+              </a>
+              <a className="btn-soft" href={LINE_JA} lang="ja">
+                LINE 日本語
+              </a>
+              <a className="btn-soft" href={LINE_TW} lang="zh-Hant">
+                LINE 繁中
+              </a>
+            </div>
+          </section>
         </div>
-        <p className="sub">
-          {withData.size} treatments · checked {COLLECTED} · three clinics or
-          more
-        </p>
-        <ul className="cards">
-          {rows.map((p, i) => {
-            const t = treatments.find((x) => x.slug === p.slug);
-            return (
-              <PriceCard
-                key={p.slug + p.spec}
-                slug={p.slug}
-                name={p.spec}
-                sub={t?.ko}
-                row={p}
-                odometer
-                lazy={i > 1}
-              />
-            );
-          })}
-        </ul>
-      </section>
-
-      <div className="wrap">
-        <DrawLine />
       </div>
-      <section className="section wrap" aria-labelledby="guides">
-        <div className="sec-head">
-          <h2 id="guides">Guides</h2>
-          <Link href="/guides" aria-label="See all guides">
-            <Icon name="arrow" size={20} />
-          </Link>
-        </div>
-        <ul className="guide-list">
-          {guides.slice(0, 3).map((g) => (
-            <li key={g.slug}>
-              <Link href={`/guides/${g.slug}`}>
-                <span>
-                  <span className="guide-group">{g.group}</span>
-                  <strong>{g.title}</strong>
-                </span>
-                <img src={guideImage(g.slug)} alt="" width={640} height={480} loading="lazy" />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <div className="wrap">
-        <DrawLine />
-      </div>
-      <section className="section wrap" aria-labelledby="kinds">
-        <h2 id="kinds">Three prices, three meanings</h2>
-        <div className="three">
-          <div>
-            <h3>Listed price</h3>
-            <p>The clinic&apos;s regular or pre-discount price on its page.</p>
-          </div>
-          <div>
-            <h3>Event price</h3>
-            <p>Limited by date or by who qualifies. We keep it separate.</p>
-          </div>
-          <div>
-            <h3 className="mark">Your written quote</h3>
-            <p>What a clinic proposes for you, item by item. This one counts.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="section wrap">
-        <div className="cta-dark">
-          <h2>Want a number for your own plan?</h2>
-          <p>
-            COMEDI, run by the same company, can ask a clinic for a written
-            quote. Clinics may pay COMEDI a referral fee, explained in writing
-            before you book.
-          </p>
-          <div>
-            <a className="btn" href={WHATSAPP}>
-              <Icon name="chat" size={18} /> WhatsApp
-            </a>
-            <a className="btn-soft" href={LINE_JA} lang="ja">
-              LINE 日本語
-            </a>
-            <a className="btn-soft" href={LINE_TW} lang="zh-Hant">
-              LINE 繁中
-            </a>
-          </div>
-        </div>
-      </section>
     </>
   );
 }
