@@ -7,7 +7,9 @@ from playwright.sync_api import sync_playwright
 
 sys.stdout.reconfigure(encoding="utf-8")
 OUT = sys.argv[1] if len(sys.argv) > 1 else ""
-MOCK, PORT = 54399, 4471
+MOCK = 54399
+# 4471 을 다른 프로젝트 서버가 쓰고 있을 때 QA_PORT 로 바꿔 돌린다(2026-11-07, comedi 가 4471 사용).
+PORT = int(os.environ.get("QA_PORT", "4471"))
 BASE = f"http://127.0.0.1:{PORT}"
 ok, bad = [], []
 

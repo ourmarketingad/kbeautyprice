@@ -30,6 +30,7 @@ export default async function ForClinics({ searchParams }: Props) {
         <li>A clinic page with your introduction and area</li>
         <li>Your treatments and prices, marked as provided by the clinic</li>
         <li>A clinic login to update prices, reviewed before they go live</li>
+        <li>Your own clinic photos (interior or exterior), shown only with your written permission</li>
       </ul>
       <h2>Rules for every listing</h2>
       <ul className="check-list">

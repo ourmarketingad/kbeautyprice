@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { guides } from "@/data/guides";
-import { guideImage } from "@/lib/images";
+import { bandPhoto, guideImage } from "@/lib/images";
 
 export const metadata = {
   title: "Guides to Korean clinic prices",
@@ -11,7 +11,7 @@ export const metadata = {
 export default function Guides() {
   return (
     <>
-    <section className="band">
+    <section className="band band-photo" style={bandPhoto("seoul-namsan")}>
       <div className="wrap">
         <h1 className="page-title">Guides</h1>
         <p className="sub">
