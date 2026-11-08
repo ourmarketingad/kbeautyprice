@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Odometer, RangeBar } from "@/components/Motion";
 import PriceCard from "@/components/PriceCard";
 import QuoteBar from "@/components/QuoteBar";
-import { treatmentImage } from "@/lib/images";
+import { bandPhoto, treatmentImage } from "@/lib/images";
 import { publishedItemsFor } from "@/lib/listing";
 import { categories } from "@/data/categories";
 import { guides } from "@/data/guides";
@@ -154,7 +154,7 @@ export default async function TreatmentPage({ params }: Props) {
 
   return (
     <>
-    <section className="band band-detail">
+    <section className="band band-detail band-photo" style={bandPhoto("seoul-road")}>
       <div className="wrap">
         <p className="note">
           <Link href="/treatments">Prices</Link>

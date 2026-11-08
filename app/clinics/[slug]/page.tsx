@@ -22,6 +22,15 @@ export default async function ClinicPage({ params }: Props) {
   const { clinic, items } = data;
   return (
     <div className="narrow has-quote-bar">
+      {clinic.photo_url && clinic.photo_consent && (
+        <img
+          className="clinic-photo"
+          src={clinic.photo_url}
+          alt={`${clinic.name_en}, photo provided by the clinic`}
+          width={1200}
+          height={800}
+        />
+      )}
       <p className="note">Listed by the clinic · Advertising information</p>
       <h1>{clinic.name_en}</h1>
       {clinic.name_ko && <p lang="ko" className="sub">{clinic.name_ko}{clinic.area ? ` · ${clinic.area}` : ""}</p>}

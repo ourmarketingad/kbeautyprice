@@ -53,8 +53,9 @@ export default function RootLayout({
             </div>
             <p>
               Reference information, not a quote or medical advice. KBeautyPrice
-              does not diagnose or recommend treatment. Images are illustrations,
-              not clinic photos.
+              does not diagnose or recommend treatment. Images are stock photos
+              or illustrations. They do not show patients, treatment results or
+              a specific clinic, unless marked as provided by the clinic.
             </p>
             <p>
               Operated by OUR Marketing (아워마케팅) · CEO Seungyeon Park ·

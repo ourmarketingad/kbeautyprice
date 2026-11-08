@@ -61,11 +61,17 @@ async function reviewClinic(form: FormData) {
   const signed = form.get("signed") === "yes";
   // 등록 명부 확인과 서명된 동의서가 모두 있어야 공개할 수 있다.
   if (publish && !(registry && signed)) redirect("/admin?error=checks");
+  // 병원 실사 사진: https 주소 + 서면 사용 허락을 받았을 때만 저장한다.
+  const photo = String(form.get("photo_url") ?? "").trim();
+  const consent = form.get("photo_consent") === "yes";
+  if (photo && (!/^https:\/\//.test(photo) || !consent)) redirect("/admin?error=photo");
   await sb
     .from("clinics")
     .update({
       registry_checked: registry,
       agreement_signed: signed,
+      photo_url: photo || null,
+      photo_consent: photo ? consent : false,
       status: publish ? "published" : "rejected",
       reject_reason: publish ? null : String(form.get("reason") ?? "").slice(0, 500) || "Please review and resubmit.",
     })
@@ -125,6 +131,11 @@ export default async function Admin({ searchParams }: Props) {
           Not published. Tick both the registry check and the signed agreement first.
         </p>
       )}
+      {error === "photo" && (
+        <p className="alert" role="alert">
+          Not saved. A clinic photo needs an https address and the written-permission tick.
+        </p>
+      )}
       <h2>Applications ({apps.length})</h2>
       {apps.map((x) => (
         <section key={x.id} className="cta-band" style={{ display: "block" }}>
@@ -167,6 +178,14 @@ export default async function Admin({ searchParams }: Props) {
             <label className="check">
               <input type="checkbox" name="signed" value="yes" defaultChecked={x.agreement_signed} />
               <span>Signed listing agreement received</span>
+            </label>
+            <div className="field">
+              <label htmlFor={`p-${x.id}`}>Clinic photo address (https, provided by the clinic)</label>
+              <input id={`p-${x.id}`} name="photo_url" type="url" maxLength={500} defaultValue={x.photo_url ?? ""} />
+            </div>
+            <label className="check">
+              <input type="checkbox" name="photo_consent" value="yes" defaultChecked={x.photo_consent} />
+              <span>Clinic gave written permission to show this photo</span>
             </label>
             <div className="field">
               <label htmlFor={`r-${x.id}`}>Reason, if sending back</label>

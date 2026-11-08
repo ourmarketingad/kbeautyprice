@@ -1,6 +1,7 @@
 // 첫 화면 — 시안 B(2026-11-06 대표 선택): 코랄 머리 띠 + 흰 검색 → 위로 겹치는 흰 판(아이콘 타일·가격 카드 띠·계산기·글)
 // 옛 첫 화면 내용은 모두 남겼다: 검색·많이 찾는 시술·계산기·근거 숫자·분류·가격·글·세 가지 가격·상담. 옛 사진 카드 3장은 가격 띠·글·제보 칸으로 옮겼다.
 import Link from "next/link";
+import { preload } from "react-dom";
 import { Icon } from "@/components/Icons";
 import { Odometer, WordTitle } from "@/components/Motion";
 import PriceCheck from "@/components/PriceCheck";
@@ -9,6 +10,7 @@ import { categories } from "@/data/categories";
 import { guides } from "@/data/guides";
 import { treatments } from "@/data/treatments";
 import { guideImage, treatmentImage } from "@/lib/images";
+import { bandPhoto } from "@/lib/images";
 import { COLLECTED, EVIDENCE, PRICES, VAT_LABEL, range, usd, won } from "@/lib/prices";
 
 const checked = new Date(COLLECTED + "T00:00:00Z").toLocaleDateString("en-GB", {
@@ -19,6 +21,9 @@ const checked = new Date(COLLECTED + "T00:00:00Z").toLocaleDateString("en-GB", {
 });
 
 export default function HomePage() {
+  // 첫 화면 띠 뒤 사진을 먼저 받는다(첫 화면 큰 그림 시간이 늦어지지 않게)
+  preload("/img/photo/seoul-gangnam-m.webp", { as: "image", media: "(max-width: 760px)", fetchPriority: "high" });
+  preload("/img/photo/seoul-gangnam.webp", { as: "image", media: "(min-width: 761px)", fetchPriority: "high" });
   const listed = treatments.flatMap((t) => {
     const row = PRICES.find((p) => p.slug === t.slug && p.kind === "list");
     return row ? [{ t, row }] : [];
@@ -34,7 +39,7 @@ export default function HomePage() {
   );
   return (
     <>
-      <section className="band band-home">
+      <section className="band band-home band-photo" style={bandPhoto("seoul-gangnam")}>
         <div className="wrap">
           <WordTitle text="Clinic prices in Seoul, checked for you" />
           <form action="/treatments" method="get" className="band-search" role="search">
@@ -94,6 +99,17 @@ export default function HomePage() {
               All prices
             </Link>
           </nav>
+
+          {/* 모델 사진(Unsplash 라이선스, 출처표 80_work/.../photos/rights.tsv). 시술 결과처럼 보이지 않는 생활 사진만 쓴다. */}
+          <Link href="/how-prices-work" className="promise">
+            <span className="promise-text">
+              <span className="guide-group">How it works</span>
+              <strong>Prices from clinic websites, not ads</strong>
+              <span>No rankings, no paid placement. Every range shows how many clinics and when we checked.</span>
+              <span className="promise-link">How we collect prices</span>
+            </span>
+            <img src="/img/photo/model-skincare.webp" alt="" width={720} height={900} />
+          </Link>
 
           <section aria-labelledby="ranges">
             <div className="sec-row">
@@ -161,7 +177,7 @@ export default function HomePage() {
                     <strong>Paid in Korea? Report what you paid</strong>
                     <span className="report-sub">No name needed. Published after five reports.</span>
                   </span>
-                  <img src="/img/hero-report.webp" alt="" width={640} height={480} loading="lazy" />
+                  <img src="/img/photo/lotion-pink.webp" alt="" width={640} height={480} loading="lazy" />
                 </Link>
               </li>
             </ul>

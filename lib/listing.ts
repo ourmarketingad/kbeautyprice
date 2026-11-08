@@ -11,6 +11,9 @@ export type ClinicRow = {
   intro: string | null;
   registry_checked: boolean;
   agreement_signed: boolean;
+  /** 병원이 낸 실사 사진. 운영자가 사용 허락(photo_consent)을 확인한 뒤에만 넣는다. */
+  photo_url: string | null;
+  photo_consent: boolean;
   status: "draft" | "pending" | "published" | "rejected";
   reject_reason: string | null;
 };

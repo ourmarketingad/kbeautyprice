@@ -2,6 +2,7 @@ import Link from "next/link";
 import { categories } from "@/data/categories";
 import { treatments } from "@/data/treatments";
 import PriceCard from "@/components/PriceCard";
+import { bandPhoto } from "@/lib/images";
 import { COLLECTED, hasPrices, pricesFor } from "@/lib/prices";
 
 export const metadata = {
@@ -30,7 +31,7 @@ export default async function TreatmentsPage({ searchParams }: Props) {
     .sort((a, b) => Number(hasPrices(b.slug)) - Number(hasPrices(a.slug)));
   return (
     <>
-    <section className="band">
+    <section className="band band-photo" style={bandPhoto("seoul-myeongdong")}>
       <div className="wrap">
       <h1 className="page-title">
         Treatment prices in Seoul
