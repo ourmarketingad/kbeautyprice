@@ -1,7 +1,7 @@
 // 휴대폰 하단 고정 상담 버튼. 탭 막대 대신 나타난다. PC에서는 숨긴다.
 import { Icon } from "@/components/Icons";
 
-export const WHATSAPP = "https://wa.me/821076851434";
+export const WHATSAPP = "https://wa.me/821027351434";
 export const LINE_JA = "https://line.me/R/ti/p/@474nuxym";
 export const LINE_TW = "https://line.me/R/ti/p/@218ndlak";
 
