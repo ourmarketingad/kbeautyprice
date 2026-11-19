@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { treatments } from "@/data/treatments";
 import { guides } from "@/data/guides";
+import { glossary } from "@/data/glossary";
 import providers from "@/data/registered-providers.json";
 import prices from "@/data/prices.json";
 
@@ -39,6 +40,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE}/guides`,
       lastModified: priced,
       changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${SITE}/glossary`,
+      lastModified: priced,
+      changeFrequency: "monthly",
       priority: 0.7,
     },
     {
@@ -81,6 +88,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
+  const termPages: MetadataRoute.Sitemap = glossary.map((t) => ({
+    url: `${SITE}/glossary/${t.slug}`,
+    lastModified: priced,
+    changeFrequency: "monthly",
+    priority: 0.6,
+  }));
+
   const clinicPages: MetadataRoute.Sitemap = items.map((p) => ({
     url: `${SITE}/hospitals/${p.slug}`,
     lastModified: checked,
@@ -88,5 +102,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [...fixed, ...treatmentPages, ...guidePages, ...clinicPages];
+  return [
+    ...fixed,
+    ...treatmentPages,
+    ...guidePages,
+    ...termPages,
+    ...clinicPages,
+  ];
 }

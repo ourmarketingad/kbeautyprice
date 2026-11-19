@@ -22,6 +22,9 @@ export default function SiteHeader() {
           <Link className="desk" href="/guides">
             Guides
           </Link>
+          <Link className="desk" href="/glossary">
+            Glossary
+          </Link>
           <Link className="desk" href="/hospitals">
             Registered clinics
           </Link>

@@ -1,5 +1,6 @@
 import { treatments } from "@/data/treatments";
 import { guides } from "@/data/guides";
+import { GLOSSARY_CATEGORY, glossary } from "@/data/glossary";
 import providers from "@/data/registered-providers.json";
 import prices from "@/data/prices.json";
 
@@ -38,6 +39,7 @@ Operated by OUR Marketing (아워마케팅), Seoul. Foreign patient attraction r
 - [How prices work](${SITE}/how-prices-work): the collection rules above, in full.
 - [Registered clinics](${SITE}/hospitals): ${providers.items.length} providers from the official Medical Korea maintained registry of institutions permitted to receive foreign patients, checked ${providers.checked}. Listed alphabetically. A listing is not a recommendation.
 - [Guides](${SITE}/guides): ${guides.length} articles on reading Korean clinic prices and quotes.
+- [Glossary](${SITE}/glossary): ${glossary.length} terms found on Korean clinic price pages and quotes, in ${Object.keys(GLOSSARY_CATEGORY).length} groups — ${Object.values(GLOSSARY_CATEGORY).map((g) => g.label.toLowerCase()).join(", ")}.
 - [Report a price](${SITE}/submit): visitors tell us what they paid, anonymously.
 - [For clinics](${SITE}/for-clinics): how a registered clinic lists its own treatments and prices.
 
@@ -52,6 +54,12 @@ ${treatments
 
 ${guides
   .map((g) => `- [${g.title}](${SITE}/guides/${g.slug}) (${g.date})`)
+  .join("\n")}
+
+## Glossary terms
+
+${glossary
+  .map((t) => `- [${t.en}](${SITE}/glossary/${t.slug}): ${t.short}`)
   .join("\n")}
 
 ## Citing this site
