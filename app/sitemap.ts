@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { treatments } from "@/data/treatments";
 import { guides } from "@/data/guides";
 import { glossary } from "@/data/glossary";
+import { LOCALES } from "@/data/i18n";
 import providers from "@/data/registered-providers.json";
 import prices from "@/data/prices.json";
 
@@ -95,6 +96,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
+  // 언어판(영어 외). 목록 1쪽 + 시술 쪽.
+  const localePages: MetadataRoute.Sitemap = LOCALES.flatMap((l) => [
+    {
+      url: `${SITE}/${l}/treatments`,
+      lastModified: priced,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
+    ...treatments.map((t) => ({
+      url: `${SITE}/${l}/treatments/${t.slug}`,
+      lastModified: priced,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+  ]);
+
   const clinicPages: MetadataRoute.Sitemap = items.map((p) => ({
     url: `${SITE}/hospitals/${p.slug}`,
     lastModified: checked,
@@ -107,6 +124,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...treatmentPages,
     ...guidePages,
     ...termPages,
+    ...localePages,
     ...clinicPages,
   ];
 }

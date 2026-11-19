@@ -8,6 +8,7 @@ import { bandPhoto, treatmentImage } from "@/lib/images";
 import { publishedItemsFor } from "@/lib/listing";
 import { categories } from "@/data/categories";
 import { guides } from "@/data/guides";
+import { LOCALES, LOCALE_META } from "@/data/i18n";
 import { treatments } from "@/data/treatments";
 import {
   COLLECTED,
@@ -41,6 +42,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: pricesFor(slug).length
       ? `${t.en} price ranges from prices Seoul clinics publish, with clinic counts and the date checked.`
       : `${t.en} in Seoul: not enough clinics publish this price yet. How to get a written quote instead.`,
+    // 다른 언어판과 서로 가리키게 한다(한쪽만 걸면 구글이 무시한다).
+    alternates: {
+      canonical: `/treatments/${slug}`,
+      languages: {
+        en: `/treatments/${slug}`,
+        ...Object.fromEntries(
+          LOCALES.map((l) => [
+            LOCALE_META[l].htmlLang,
+            `/${l}/treatments/${slug}`,
+          ]),
+        ),
+        "x-default": `/treatments/${slug}`,
+      },
+    },
   };
 }
 
@@ -376,6 +391,22 @@ export default async function TreatmentPage({ params }: Props) {
           </ul>
         </section>
       )}
+
+      <section className="section">
+        <h2>Other languages</h2>
+        <div className="chips">
+          {LOCALES.map((l) => (
+            <Link
+              key={l}
+              href={`/${l}/treatments/${t.slug}`}
+              hrefLang={LOCALE_META[l].htmlLang}
+              lang={LOCALE_META[l].htmlLang}
+            >
+              {LOCALE_META[l].label}
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="section">
         <div className="chips">
