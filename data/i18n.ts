@@ -2,15 +2,21 @@
 // 시술·분류 이름은 data/treatments.ts, data/categories.ts 에 이미 들어 있는 값을 쓴다.
 // 숫자·날짜·병원 수는 번역하지 않고 자료에서 그대로 넣는다.
 
-export const LOCALES = ["ja", "zh-Hant", "ko"] as const;
+export const LOCALES = ["ja", "zh-Hant", "zh-Hans", "es", "ko"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const LOCALE_META: Record<
   Locale,
-  { label: string; htmlLang: string; nameKey: "ja" | "zh-TW" | "ko" }
+  {
+    label: string;
+    htmlLang: string;
+    nameKey: "ja" | "zh-TW" | "zh-CN" | "es" | "ko";
+  }
 > = {
   ja: { label: "日本語", htmlLang: "ja", nameKey: "ja" },
   "zh-Hant": { label: "繁體中文", htmlLang: "zh-Hant", nameKey: "zh-TW" },
+  "zh-Hans": { label: "简体中文", htmlLang: "zh-Hans", nameKey: "zh-CN" },
+  es: { label: "Español", htmlLang: "es", nameKey: "es" },
   ko: { label: "한국어", htmlLang: "ko", nameKey: "ko" },
 };
 
@@ -167,6 +173,113 @@ export const DICTS: Record<Locale, Dict> = {
     allTreatmentsLead: (c, w, d) =>
       `${c} 項療程中有 ${w} 項列有公開價格區間。取自診所自家網站的公開價格，於 ${d} 查核。`,
     glossaryNote: "報價用語說明（英文）",
+  },
+  "zh-Hans": {
+    siteName: "KBeautyPrice",
+    priceInSeoul: (n) => `${n} 在韩国的费用`,
+    metaWithRange: (n) =>
+      `${n} 的价格区间，取自首尔诊所在自家官网公开的价格，标明诊所家数与核对日期。`,
+    metaNoRange: (n) =>
+      `${n} 目前公开同一规格价格的诊所还不够多，因此不列区间。说明如何拿到书面报价。`,
+    prices: "价格",
+    publishedRanges: "公开价格区间",
+    listedPrice: "原价",
+    eventPrice: "活动价",
+    vatIncluded: "含增值税（VAT）",
+    vatExcluded: "不含增值税（VAT）",
+    vatUnknown: "未标明是否含税",
+    vatMixed: "各家不一，含税与不含税都有",
+    clinicsCount: "诊所家数",
+    checkedOn: "核对日期",
+    aboutUsd: "美元约合",
+    noRangeTitle: "暂不列出区间",
+    noRangeBody: (m) =>
+      `公开同一规格价格的诊所不足 ${m} 家，我们不用猜测填数字，因此不列区间。`,
+    howCollected: "价格如何采集",
+    notNamed: (rate, date) =>
+      `不写诊所名称，也不做排名。美元按 1 美元兑 ${rate} 韩元（${date}）约合，实际按韩元收费。`,
+    faqTitle: "常见问题",
+    faqCost: (n) => `${n} 在韩国大概多少钱？`,
+    faqCostA: (c, spec, won, usd, date) =>
+      `首尔 ${c} 家诊所在自家官网公开 ${spec} 为 ${won}（约 ${usd}）。核对日期为 ${date}。实际金额取决于诊所、产品与疗程安排。`,
+    faqCostNoneA: (m) =>
+      `公开同一规格价格的诊所不足 ${m} 家，因此不给数字。可靠的金额是诊所的书面报价。`,
+    faqVat: "这些价格含增值税吗？",
+    faqVatA: {
+      included: "我们统计的诊所标注为含增值税。",
+      excluded: "我们统计的诊所标注为不含增值税，实付金额会更高。",
+      mixed: "各家不同，有的含税有的不含。",
+      unknown: "多数诊所没有说明是否含税。",
+    },
+    faqEvent: "活动价是什么？",
+    faqEventA: (c, won) =>
+      `另有 ${c} 家诊所公开限期或限条件的活动价 ${won}。因条件而异，所以与原价分开列出。`,
+    faqWhyDiffer: "为什么各家价差这么大？",
+    faqWhyDifferA:
+      "仪器与产品版本、发数或剂量、包含哪些项目、是否含税，各家都不一样。请逐项比较书面报价。",
+    related: "同类项目",
+    seeEnglish: "English version",
+    otherLanguages: "其他语言",
+    disclaimer:
+      "本页为参考信息，不是报价，也不是医疗建议。本站不做诊断，也不推荐具体项目。",
+    allTreatments: "各项目价格",
+    allTreatmentsLead: (c, w, d) =>
+      `${c} 个项目中有 ${w} 个列有公开价格区间。取自诊所自家官网公开的价格，于 ${d} 核对。`,
+    glossaryNote: "报价用语说明（英文）",
+  },
+  es: {
+    siteName: "KBeautyPrice",
+    priceInSeoul: (n) => `Precio de ${n} en Corea`,
+    metaWithRange: (n) =>
+      `Rangos de precio de ${n} tomados de los precios que las clínicas de Seúl publican en su propia web, con el número de clínicas y la fecha de revisión.`,
+    metaNoRange: (n) =>
+      `${n}: todavía no hay suficientes clínicas que publiquen el mismo concepto, así que no mostramos rango. Cómo pedir un presupuesto por escrito.`,
+    prices: "Precios",
+    publishedRanges: "Rangos de precio publicados",
+    listedPrice: "Precio de tarifa",
+    eventPrice: "Precio promocional",
+    vatIncluded: "IVA incluido",
+    vatExcluded: "IVA no incluido",
+    vatUnknown: "No indican si lleva IVA",
+    vatMixed: "Varía según la clínica: unas lo incluyen y otras no",
+    clinicsCount: "Clínicas",
+    checkedOn: "Revisado el",
+    aboutUsd: "Aprox. en dólares",
+    noRangeTitle: "Todavía sin rango publicado",
+    noRangeBody: (m) =>
+      `Menos de ${m} clínicas publican el mismo concepto, así que no damos una cifra inventada.`,
+    howCollected: "Cómo recogemos los precios",
+    notNamed: (rate, date) =>
+      `No damos nombres de clínicas ni las ordenamos por ranking. Los dólares son una referencia a ${rate} wones por dólar (${date}); las clínicas cobran en wones.`,
+    faqTitle: "Preguntas frecuentes",
+    faqCost: (n) => `¿Cuánto cuesta ${n} en Corea?`,
+    faqCostA: (c, spec, won, usd, date) =>
+      `${c} clínicas de Seúl publican ${spec} a ${won} (unos ${usd}) en su propia web. Revisado el ${date}. Su precio dependerá de la clínica, el producto y el plan de tratamiento.`,
+    faqCostNoneA: (m) =>
+      `Menos de ${m} clínicas publican el mismo concepto, así que no damos una cifra. El presupuesto por escrito de la clínica es el dato fiable.`,
+    faqVat: "¿Estos precios llevan IVA?",
+    faqVatA: {
+      included: "Las clínicas contadas muestran el precio con IVA incluido.",
+      excluded:
+        "Las clínicas contadas muestran el precio sin IVA, así que lo que se paga es más alto.",
+      mixed: "Depende de la clínica: unas lo incluyen y otras no.",
+      unknown: "La mayoría no indica si el IVA está incluido.",
+    },
+    faqEvent: "¿Qué es el precio promocional?",
+    faqEventA: (c, won) =>
+      `${c} clínicas publican además un precio promocional de ${won}, sujeto a fechas o condiciones. Por eso lo separamos del precio de tarifa.`,
+    faqWhyDiffer: "¿Por qué varían tanto los precios entre clínicas?",
+    faqWhyDifferA:
+      "Cambian el equipo o la versión del producto, la dosis o el número de disparos, lo que va incluido y si el IVA está dentro. Compare los presupuestos por escrito concepto a concepto.",
+    related: "De la misma categoría",
+    seeEnglish: "English version",
+    otherLanguages: "Otros idiomas",
+    disclaimer:
+      "Información de referencia; no es un presupuesto ni consejo médico. No diagnosticamos ni recomendamos tratamientos.",
+    allTreatments: "Precios por tratamiento",
+    allTreatmentsLead: (c, w, d) =>
+      `${w} de ${c} tratamientos tienen un rango de precio publicado. Tomado de los precios que las clínicas publican en su propia web, revisado el ${d}.`,
+    glossaryNote: "Glosario de presupuestos (en inglés)",
   },
   ko: {
     siteName: "KBeautyPrice",
