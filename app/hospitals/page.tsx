@@ -6,6 +6,8 @@ export const metadata = {
   title: "Registered clinics in Korea",
   description:
     "Clinics on the official Medical Korea maintained registry of institutions that may receive foreign patients, by area and field.",
+  // 지역·분야·더보기는 같은 쪽을 쿼리로 걸러 보여 준다. 대표 주소를 하나로 고정한다.
+  alternates: { canonical: "/hospitals" },
 };
 
 type P = {

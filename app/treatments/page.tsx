@@ -9,6 +9,8 @@ export const metadata = {
   title: "Treatment prices in Seoul",
   description:
     "Price ranges for Korean clinic treatments from prices clinics publish, with clinic counts and the date checked.",
+  // 분류·검색은 같은 쪽을 쿼리로 걸러 보여 준다. 대표 주소를 하나로 고정한다.
+  alternates: { canonical: "/treatments" },
 };
 
 type Props = {

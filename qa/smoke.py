@@ -57,7 +57,10 @@ for p in PAGES:
     vis = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", body))
     check(p + " 200", st == 200)
     check(p + " H1 하나", len(re.findall(r"<h1[\s>]", h)) == 1, str(len(re.findall(r"<h1[\s>]", h))))
-    check(p + " 검색 차단", re.search(r'name="robots" content="noindex', h) is not None)
+    noindexed = re.search(r'name="robots" content="noindex', h) is not None
+    # [결정 2026-11-19 대표] 검색 공개 시작. 로그인·개인 쪽만 차단이고 나머지는 색인돼야 한다.
+    want_blocked = p in ("/auth", "/my-submissions", "/admin", "/manage")
+    check(p + (" 검색 차단" if want_blocked else " 색인 허용"), noindexed == want_blocked)
     check(p + " 근거 없는 표현 없음", not BANNED.search(vis), str(BANNED.findall(vis))[:60])
     if p.startswith("/treatments") or p == "/":
         check(p + " 금액 옆 병원명 없음", not any(c in vis for c in CLINICS), str([c for c in CLINICS if c in vis]))

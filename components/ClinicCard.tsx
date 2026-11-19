@@ -1,6 +1,7 @@
 "use client";
 // 병원 카드. 호출은 유료라 카드가 화면에 들어올 때만 사진을 부른다. 구글 출처·작성자 표기 필수.
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Icon } from "@/components/Icons";
 
 type Photo = { uri: string; authors: { name: string; uri?: string }[] };
@@ -60,7 +61,11 @@ export default function ClinicCard({
         )}
       </div>
       <div className="clinic-body">
-        <strong>{en}</strong>
+        <strong>
+          <Link className="clinic-name-link" href={`/hospitals/${slug}`}>
+            {en}
+          </Link>
+        </strong>
         {en !== ko && <span lang="ko">{ko}</span>}
         <span>{meta}</span>
         {show && (

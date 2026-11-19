@@ -4,8 +4,8 @@ import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import TabBar from "@/components/TabBar";
 
-// [대표 승인 전] 도메인 연결과 검색 공개는 승인 뒤에 한다. 공개할 때 INDEXABLE 만 true 로 바꾼다.
-const INDEXABLE = false;
+// [결정 2026-11-19 대표] 검색 공개 시작. 로봇 규칙은 app/robots.ts, 쪽 목록은 app/sitemap.ts.
+const INDEXABLE = true;
 
 export const metadata: Metadata = {
   metadataBase: new URL(

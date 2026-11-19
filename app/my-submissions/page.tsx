@@ -2,7 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-export const metadata = { title: "My Submissions" };
+export const metadata = {
+  title: "My Submissions",
+  // 개인이 낸 제보 목록이라 검색에 올리지 않는다.
+  robots: { index: false, follow: false },
+};
 
 const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }> = {
   pending:  { label: "Under review", color: "#d97706", bg: "#fef3c720" },
