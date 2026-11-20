@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 supabase/
+
+# QA 실행 기록(사람이 읽는 결과만 남기고 로그는 올리지 않는다)
+qa/build.log
+qa/smoke.log
+qa/server.log
+qa/last-run.txt

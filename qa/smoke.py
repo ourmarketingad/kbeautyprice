@@ -50,7 +50,11 @@ AUDIT = "D:/아워마케팅/OUR-Marketing-KB/80_work/ourmarketing/web/2026-11-06
 CLINICS = sorted({r["clinic"].split(" ")[0] for g in json.load(open(AUDIT, encoding="utf-8")) for r in g["rows"]})
 BANNED = re.compile(r"real visitors|No fake|No ads|Submit a real|\bbest\b|cheapest|★|before and after photos of|guarantee", re.I)
 guides = re.findall(r'slug: "([^"]+)"', open("data/guides.ts", encoding="utf-8").read())
-PAGES = [f"/guides/{g}" for g in guides] + ["/for-clinics", "/guides", "/", "/treatments", "/how-prices-work", "/hospitals", "/submit", "/privacy", "/terms", "/auth"] + [f"/treatments/{s}" for s in slugs]
+# 지역 쪽·지역×시술 쪽. 가격은 지역별로 없으니 「지역 가격」을 내세우지 않는지도 같이 본다.
+AREA_SLUGS = re.findall(r'slug: "([a-z-]+)"', open("lib/areas.ts", encoding="utf-8").read())
+PRICED = sorted({p["slug"] for p in prices})
+AREA_PAGES = [f"/in/{a}" for a in AREA_SLUGS] + [f"/in/{a}/{t}" for a in AREA_SLUGS for t in PRICED]
+PAGES = [f"/guides/{g}" for g in guides] + ["/for-clinics", "/guides", "/", "/treatments", "/how-prices-work", "/hospitals", "/submit", "/privacy", "/terms", "/auth"] + [f"/treatments/{s}" for s in slugs] + AREA_PAGES
 for p in PAGES:
     st, h = get(p)
     body = re.sub(r"<script.*?</script>|<style.*?</style>", " ", h, flags=re.S)
@@ -65,6 +69,15 @@ for p in PAGES:
     if p.startswith("/treatments") or p == "/":
         check(p + " 금액 옆 병원명 없음", not any(c in vis for c in CLINICS), str([c for c in CLINICS if c in vis]))
     check(p + " 고유 제목", bool(re.findall(r"<title>(.*?)</title>", h)))
+check("지역 쪽 수 = 지역 7 + 지역x시술", len(AREA_PAGES) == len(AREA_SLUGS) * (1 + len(PRICED)), str(len(AREA_PAGES)))
+for a in AREA_SLUGS:
+    for t in PRICED:
+        h = get(f"/in/{a}/{t}")[1]
+        vis = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<script.*?</script>", " ", h, flags=re.S)))
+        check(f"/in/{a}/{t} 지역 가격 없다고 밝힘", "there is no" in vis and "price" in vis)
+        check(f"/in/{a}/{t} 명부 확인일 표시", "2026-10-17" in vis)
+        check(f"/in/{a}/{t} 순위 표현 없음", not re.search(r"best|cheaper here|top clinic", vis, re.I))
+
 for s in slugs:
     h = get("/treatments/" + s)[1]
     want = [p for p in prices if p["slug"] == s]

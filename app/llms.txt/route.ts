@@ -3,6 +3,7 @@ import { guides } from "@/data/guides";
 import { GLOSSARY_CATEGORY, glossary } from "@/data/glossary";
 import providers from "@/data/registered-providers.json";
 import prices from "@/data/prices.json";
+import { AREAS, AREA_TREATMENTS, clinicsInArea } from "@/lib/areas";
 
 // AI 검색이 읽는 안내 파일. 숫자가 낡지 않게 자료에서 그때그때 만든다.
 const SITE =
@@ -40,6 +41,7 @@ Operated by OUR Marketing (아워마케팅), Seoul. Foreign patient attraction r
 - [Registered clinics](${SITE}/hospitals): ${providers.items.length} providers from the official Medical Korea maintained registry of institutions permitted to receive foreign patients, checked ${providers.checked}. Listed alphabetically. A listing is not a recommendation.
 - [Guides](${SITE}/guides): ${guides.length} articles on reading Korean clinic prices and quotes.
 - [Glossary](${SITE}/glossary): ${glossary.length} terms found on Korean clinic price pages and quotes, in ${Object.keys(GLOSSARY_CATEGORY).length} groups — ${Object.values(GLOSSARY_CATEGORY).map((g) => g.label.toLowerCase()).join(", ")}.
+- [Areas](${SITE}/in/gangnam-station): ${AREAS.length} areas in the registry, each with a page per priced treatment. Clinic counts per area are measured from the registry; prices are NOT published per area and we do not estimate them.
 - [Report a price](${SITE}/submit): visitors tell us what they paid, anonymously.
 - [For clinics](${SITE}/for-clinics): how a registered clinic lists its own treatments and prices.
 
@@ -49,6 +51,14 @@ ${treatments
   .filter((t) => withPrice.includes(t.slug))
   .map((t) => `- [${t.en}](${SITE}/treatments/${t.slug})`)
   .join("\n")}
+
+## Areas, with registered clinic counts
+
+Prices on this site are not broken down by area. An area page gives the registry count for that area plus the nationwide published range.
+
+${AREAS.map((a) => `- [${a.en}](${SITE}/in/${a.slug}): ${clinicsInArea(a).length} registered clinics, ${a.district}.`).join(String.fromCharCode(10))}
+
+Each area also has a page per treatment, at ${SITE}/in/<area>/<treatment>, for these ${AREA_TREATMENTS.length} treatments: ${AREA_TREATMENTS.map((t) => t.slug).join(", ")}.
 
 ## Guides
 

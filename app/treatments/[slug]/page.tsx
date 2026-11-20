@@ -9,6 +9,7 @@ import { publishedItemsFor } from "@/lib/listing";
 import { categories } from "@/data/categories";
 import { guides } from "@/data/guides";
 import { LOCALES, LOCALE_META } from "@/data/i18n";
+import { AREAS, AREA_TREATMENTS } from "@/lib/areas";
 import { treatments } from "@/data/treatments";
 import {
   COLLECTED,
@@ -389,6 +390,23 @@ export default async function TreatmentPage({ params }: Props) {
               />
             ))}
           </ul>
+        </section>
+      )}
+
+      {AREA_TREATMENTS.some((x) => x.slug === t.slug) && (
+        <section className="section" aria-labelledby="by-area">
+          <h2 id="by-area">By area</h2>
+          <p className="note">
+            Prices are not published by district, so these pages give the
+            registry counts for each area, not an area price.
+          </p>
+          <div className="chips">
+            {AREAS.map((a) => (
+              <Link key={a.slug} href={`/in/${a.slug}/${t.slug}`}>
+                {t.en} in {a.en}
+              </Link>
+            ))}
+          </div>
         </section>
       )}
 

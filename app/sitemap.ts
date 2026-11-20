@@ -3,6 +3,7 @@ import { treatments } from "@/data/treatments";
 import { guides } from "@/data/guides";
 import { glossary } from "@/data/glossary";
 import { LOCALES } from "@/data/i18n";
+import { AREAS, AREA_TREATMENTS } from "@/lib/areas";
 import providers from "@/data/registered-providers.json";
 import prices from "@/data/prices.json";
 
@@ -112,6 +113,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ]);
 
+  // 지역 쪽과 지역×시술 쪽. 가격은 지역별로 없고, 지역 등록 병원 수는 명부 확인일에 맞춘다.
+  const areaPages: MetadataRoute.Sitemap = AREAS.map((a) => ({
+    url: `${SITE}/in/${a.slug}`,
+    lastModified: checked,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  const areaTreatmentPages: MetadataRoute.Sitemap = AREAS.flatMap((a) =>
+    AREA_TREATMENTS.map((t) => ({
+      url: `${SITE}/in/${a.slug}/${t.slug}`,
+      lastModified: priced,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })),
+  );
+
   const clinicPages: MetadataRoute.Sitemap = items.map((p) => ({
     url: `${SITE}/hospitals/${p.slug}`,
     lastModified: checked,
@@ -125,6 +143,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...guidePages,
     ...termPages,
     ...localePages,
+    ...areaPages,
+    ...areaTreatmentPages,
     ...clinicPages,
   ];
 }

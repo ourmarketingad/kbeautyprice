@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ClinicCard from "@/components/ClinicCard";
 import providers from "@/data/registered-providers.json";
+import { AREAS as AREA_PAGES } from "@/lib/areas";
 
 export const metadata = {
   title: "Registered clinics in Korea",
@@ -60,6 +61,15 @@ export default async function Hospitals({ searchParams }: Props) {
         Korea maintained registry, checked {CHECKED}. Listed alphabetically, not
         ranked. A listing is not a recommendation and says nothing about price,
         quality or which treatments a clinic offers.
+      </p>
+      <p className="note" style={{ marginTop: 12 }}>
+        Area pages:{" "}
+        {AREA_PAGES.map((a, i) => (
+          <span key={a.slug}>
+            {i > 0 && " · "}
+            <Link href={`/in/${a.slug}`}>{a.en}</Link>
+          </span>
+        ))}
       </p>
       <div className="hscroll flush" aria-label="Area">
         <Link href={link("", field)} aria-current={!area ? "true" : undefined}>
