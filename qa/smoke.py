@@ -205,7 +205,16 @@ with sync_playwright() as p:
     pg.goto(BASE + "/treatments?category=filler", wait_until="domcontentloaded")
     check("분류 필터", pg.locator("a[href='/treatments/dermal-filler']").count() == 1 and pg.locator("a[href='/treatments/rejuran']").count() == 0)
     pg.goto(BASE + "/hospitals?area=Myeongdong&field=skin", wait_until="domcontentloaded")
-    check("명부 필터", "providers" in pg.inner_text("main") and "Gangnam Station ·" not in pg.inner_text("main"))
+    # 카드 자체를 본다. 쪽 위쪽 「Area pages: Gangnam Station · ...」 안내 줄과 섞이지 않게.
+    cards = pg.locator("li.clinic-card")
+    metas = [cards.nth(i).inner_text() for i in range(cards.count())]
+    check(
+        "명부 필터",
+        "providers" in pg.inner_text("main")
+        and len(metas) > 0
+        and all("Myeongdong" in m for m in metas),
+        f"{len(metas)}장 중 다른 지역 {len([m for m in metas if 'Myeongdong' not in m])}장",
+    )
     # 병원 사진: 유료 호출을 막고 가짜 응답으로 시험
     calls = []
     cp = br.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
