@@ -1,6 +1,7 @@
 import { COLLECTED, KRW_PER_USD, MIN_CLINICS } from "@/lib/prices";
 
 export const metadata = {
+  alternates: { canonical: "/how-prices-work" },
   title: "How prices work",
   description:
     "Where KBeautyPrice numbers come from, what we leave out, and how reader reports are handled.",

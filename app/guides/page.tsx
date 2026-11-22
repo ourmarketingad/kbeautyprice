@@ -3,6 +3,7 @@ import { guides } from "@/data/guides";
 import { bandPhoto, guideImage } from "@/lib/images";
 
 export const metadata = {
+  alternates: { canonical: "/guides" },
   title: "Guides to Korean clinic prices",
   description:
     "Short guides on reading clinic prices in Korea, what a written quote should include and what clinics publish.",

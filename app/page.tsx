@@ -13,6 +13,9 @@ import { guideImage, treatmentImage } from "@/lib/images";
 import { bandPhoto } from "@/lib/images";
 import { COLLECTED, EVIDENCE, PRICES, VAT_LABEL, range, usd, won } from "@/lib/prices";
 
+// 대표주소. 홈에 canonical 이 없어 들어가지 않았다(2026-11-23 확인).
+export const metadata = { alternates: { canonical: "/" } };
+
 const checked = new Date(COLLECTED + "T00:00:00Z").toLocaleDateString("en-GB", {
   day: "numeric",
   month: "short",
