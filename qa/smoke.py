@@ -105,7 +105,7 @@ for lg in LOCALES:
             vis = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<script.*?</script>", " ", h, flags=re.S)))
             check(f"/{lg}/in/{a}/{t} 200", st == 200)
             check(f"/{lg}/in/{a}/{t} 지역 가격 없다고 그 언어로 밝힘", AREA_HONEST[lg] in vis)
-            check(f"/{lg}/in/{a}/{t} 영어 쪽 hreflang", 'hreflang="en"' in h)
+            check(f"/{lg}/in/{a}/{t} 영어 쪽 hreflang", 'hreflang="en"' in h.lower())
 
 # 사이트맵·llms.txt 가 언어판 지역 쪽까지 안내하는지
 sm = get("/sitemap.xml")[1]
@@ -357,6 +357,28 @@ with sync_playwright() as p:
     c2.close()
     br.close()
 
+
+# 사이트가 검색엔진에 알려주는 주소가 실제로 응답하는지 본다.
+# 통과/실패로 세지 않고 경고만 찍는다 — 도메인 쪽은 대표 결정이 걸려 있어 배포를 막지 않는다.
+def warn_declared_host():
+    # 크롤러가 따라가는 주소는 robots.txt 의 Sitemap 줄이다. 그 주소가 응답하지 않으면 색인이 잡히지 않는다.
+    rb = get("/robots.txt")[1]
+    m = re.search(r"(?mi)^Sitemap:\s*(https?://\S+)", rb)
+    if not m:
+        print("WARN robots.txt 에 Sitemap 줄이 없다")
+        return
+    url = m.group(1)
+    if url.startswith(BASE.rstrip("/")):
+        return
+    try:
+        urllib.request.urlopen(url, timeout=25).read(1)
+        print(f"OK   사이트가 알려주는 사이트맵 주소 {url} 가 응답한다")
+    except Exception as ex:
+        print(f"WARN 사이트가 검색엔진에 알려주는 주소 {url} 가 응답하지 않는다 ({type(ex).__name__}). "
+              f"지금 열리는 주소는 {BASE} 다. DNS 를 고치거나 대표주소를 바꿔야 색인이 잡힌다.")
+
+
+warn_declared_host()
 for x in bad:
     print("FAIL", x)
 print(f"PASS {len(ok)} / FAIL {len(bad)}")
