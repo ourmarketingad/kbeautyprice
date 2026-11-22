@@ -130,6 +130,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   );
 
+  // 언어판 지역 쪽. 영어 쪽과 같은 짜임이고 문구만 그 언어다.
+  const localeAreaPages: MetadataRoute.Sitemap = LOCALES.flatMap((l) => [
+    ...AREAS.map((a) => ({
+      url: `${SITE}/${l}/in/${a.slug}`,
+      lastModified: checked,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...AREAS.flatMap((a) =>
+      AREA_TREATMENTS.map((t) => ({
+        url: `${SITE}/${l}/in/${a.slug}/${t.slug}`,
+        lastModified: priced,
+        changeFrequency: "weekly" as const,
+        priority: 0.5,
+      })),
+    ),
+  ]);
+
   const clinicPages: MetadataRoute.Sitemap = items.map((p) => ({
     url: `${SITE}/hospitals/${p.slug}`,
     lastModified: checked,
@@ -145,6 +163,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...localePages,
     ...areaPages,
     ...areaTreatmentPages,
+    ...localeAreaPages,
     ...clinicPages,
   ];
 }

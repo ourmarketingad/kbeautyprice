@@ -132,3 +132,20 @@ const PRICED = new Set(PRICES.map((p) => p.slug));
 export const AREA_TREATMENTS: Treatment[] = treatments.filter((t) =>
   PRICED.has(t.slug),
 );
+
+/** 지역 x 시술 쪽에서 「예약 전에 확인할 것」으로 보여 줄 용어. 영어 사전 쪽으로 이어진다. */
+export const CHECK_TERMS: Record<string, string[]> = {
+  lifting: ["shot-count", "cartridge", "event-price"],
+  filler: ["cc-and-syringe", "event-price"],
+  "skin-booster": ["session-and-course", "event-price"],
+  laser: ["session-and-course", "pass-and-pulse"],
+  botox: ["event-price", "session-and-course"],
+  "hair-removal": ["session-and-course", "package-deal"],
+  "double-eyelid": ["anesthesia-fee", "aftercare-fee"],
+  body: ["anesthesia-fee", "aftercare-fee"],
+  "thread-lift": ["event-price", "session-and-course"],
+  "fat-dissolving": ["session-and-course", "event-price"],
+  rhinoplasty: ["anesthesia-fee", "aftercare-fee"],
+  dental: ["written-quote", "package-deal"],
+  "hair-transplant": ["written-quote", "anesthesia-fee"],
+};

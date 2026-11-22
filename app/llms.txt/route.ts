@@ -4,6 +4,7 @@ import { GLOSSARY_CATEGORY, glossary } from "@/data/glossary";
 import providers from "@/data/registered-providers.json";
 import prices from "@/data/prices.json";
 import { AREAS, AREA_TREATMENTS, clinicsInArea } from "@/lib/areas";
+import { LOCALES } from "@/data/i18n";
 
 // AI 검색이 읽는 안내 파일. 숫자가 낡지 않게 자료에서 그때그때 만든다.
 const SITE =
@@ -59,6 +60,8 @@ Prices on this site are not broken down by area. An area page gives the registry
 ${AREAS.map((a) => `- [${a.en}](${SITE}/in/${a.slug}): ${clinicsInArea(a).length} registered clinics, ${a.district}.`).join(String.fromCharCode(10))}
 
 Each area also has a page per treatment, at ${SITE}/in/<area>/<treatment>, for these ${AREA_TREATMENTS.length} treatments: ${AREA_TREATMENTS.map((t) => t.slug).join(", ")}.
+
+Every area page and area-treatment page also exists in ${LOCALES.length} more languages at ${SITE}/<lang>/in/<area> and ${SITE}/<lang>/in/<area>/<treatment>, where <lang> is one of: ${LOCALES.join(", ")}. The numbers are identical across languages; only the wording changes. None of them states a price for an area, because no such price is collected.
 
 ## Guides
 

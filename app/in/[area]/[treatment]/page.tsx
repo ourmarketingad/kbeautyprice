@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import {
   AREAS,
   AREA_TREATMENTS,
+  CHECK_TERMS,
   areaBySlug,
   clinicsForTreatmentInArea,
   clinicsInArea,
@@ -12,6 +13,7 @@ import {
 import { CLINICS_CHECKED, FIELD_LABEL } from "@/lib/clinics";
 import { categories } from "@/data/categories";
 import { glossary } from "@/data/glossary";
+import { LOCALES, LOCALE_META } from "@/data/i18n";
 import {
   COLLECTED,
   KRW_PER_USD,
@@ -37,22 +39,6 @@ export function generateStaticParams() {
   );
 }
 
-const CHECK_TERMS: Record<string, string[]> = {
-  lifting: ["shot-count", "cartridge", "event-price"],
-  filler: ["cc-and-syringe", "event-price"],
-  "skin-booster": ["session-and-course", "event-price"],
-  laser: ["session-and-course", "pass-and-pulse"],
-  botox: ["event-price", "session-and-course"],
-  "hair-removal": ["session-and-course", "package-deal"],
-  "double-eyelid": ["anesthesia-fee", "aftercare-fee"],
-  body: ["anesthesia-fee", "aftercare-fee"],
-  "thread-lift": ["event-price", "session-and-course"],
-  "fat-dissolving": ["session-and-course", "event-price"],
-  rhinoplasty: ["anesthesia-fee", "aftercare-fee"],
-  dental: ["written-quote", "package-deal"],
-  "hair-transplant": ["written-quote", "anesthesia-fee"],
-};
-
 const termBySlug = (s: string) => glossary.find((g) => g.slug === s);
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -67,7 +53,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: lead
       ? `${n.toLocaleString("en-US")} registered clinics in ${a.en} work in this field. Across Seoul, ${lead.clinics} clinics publish ${lead.spec} at ${range(lead.low, lead.high, won)}, collected ${COLLECTED}. Prices are not published by area.`
       : `${n.toLocaleString("en-US")} registered clinics in ${a.en} work in this field. What to check before booking, and the published price range across Seoul.`,
-    alternates: { canonical: `/in/${a.slug}/${t.slug}` },
+    alternates: {
+      canonical: `/in/${a.slug}/${t.slug}`,
+      languages: {
+        en: `/in/${a.slug}/${t.slug}`,
+        ...Object.fromEntries(
+          LOCALES.map((l) => [
+            LOCALE_META[l].htmlLang,
+            `/${l}/in/${a.slug}/${t.slug}`,
+          ]),
+        ),
+        "x-default": `/in/${a.slug}/${t.slug}`,
+      },
+    },
   };
 }
 
@@ -301,6 +299,21 @@ export default async function AreaTreatment({ params }: Props) {
           <span key={o.slug}>
             {i > 0 && " · "}
             <Link href={`/in/${a.slug}/${o.slug}`}>{o.en}</Link>
+          </span>
+        ))}
+      </p>
+
+      <h2>Other languages</h2>
+      <p className="note">
+        {LOCALES.map((l, i) => (
+          <span key={l}>
+            {i > 0 && " · "}
+            <Link
+              href={`/${l}/in/${a.slug}/${t.slug}`}
+              hrefLang={LOCALE_META[l].htmlLang}
+            >
+              {LOCALE_META[l].label}
+            </Link>
           </span>
         ))}
       </p>

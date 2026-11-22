@@ -76,7 +76,43 @@ for a in AREA_SLUGS:
         vis = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<script.*?</script>", " ", h, flags=re.S)))
         check(f"/in/{a}/{t} 지역 가격 없다고 밝힘", "there is no" in vis and "price" in vis)
         check(f"/in/{a}/{t} 명부 확인일 표시", "2026-10-17" in vis)
-        check(f"/in/{a}/{t} 순위 표현 없음", not re.search(r"best|cheaper here|top clinic", vis, re.I))
+        check(f"/in/{a}/{t} 순위 표현 없음", not re.search(r"\bbest\b|cheaper here|top clinic", vis, re.I))
+
+# 언어판 지역 쪽. 숫자는 영어 쪽과 같아야 하고, 「지역 가격 없다」는 말이 그 언어로 들어가 있어야 한다.
+LOCALES = re.findall(r'(\S+): \{ label:', open("data/i18n.ts", encoding="utf-8").read())
+LOCALES = [l.strip('"') for l in LOCALES]
+AREA_HONEST = {
+    "ja": "数字を作るより",
+    "zh-Hant": "我們寧可這樣說",
+    "zh-Hans": "我们宁可这样说",
+    "es": "Preferimos decirlo antes que inventar",
+    "ko": "숫자를 지어내기보다",
+}
+check("언어 5개 찾음", len(LOCALES) == 5 and set(LOCALES) == set(AREA_HONEST), str(LOCALES))
+for lg in LOCALES:
+    for a in AREA_SLUGS:
+        st, h = get(f"/{lg}/in/{a}")
+        vis = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<script.*?</script>", " ", h, flags=re.S)))
+        check(f"/{lg}/in/{a} 200", st == 200)
+        check(f"/{lg}/in/{a} H1 하나", len(re.findall(r"<h1[\s>]", h)) == 1)
+        check(f"/{lg}/in/{a} 그 언어로 표시", f'lang="{lg}"' in h)
+        check(f"/{lg}/in/{a} 영어 쪽으로 가는 길", f'href="/in/{a}"' in h)
+        check(f"/{lg}/in/{a} 명부 확인일 표시", "2026-10-17" in vis)
+        check(f"/{lg}/in/{a} 순위 표현 없음", not re.search(r"\bbest\b|cheapest|top clinic", vis, re.I))
+    for a in AREA_SLUGS:
+        for t in PRICED:
+            st, h = get(f"/{lg}/in/{a}/{t}")
+            vis = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<script.*?</script>", " ", h, flags=re.S)))
+            check(f"/{lg}/in/{a}/{t} 200", st == 200)
+            check(f"/{lg}/in/{a}/{t} 지역 가격 없다고 그 언어로 밝힘", AREA_HONEST[lg] in vis)
+            check(f"/{lg}/in/{a}/{t} 영어 쪽 hreflang", 'hreflang="en"' in h)
+
+# 사이트맵·llms.txt 가 언어판 지역 쪽까지 안내하는지
+sm = get("/sitemap.xml")[1]
+want_in = len(AREA_SLUGS) * (1 + len(PRICED)) * (1 + len(LOCALES))
+got_in = len(re.findall(r"<loc>[^<]*/in/", sm))
+check("사이트맵 지역 쪽 수", got_in == want_in, f"{got_in} != {want_in}")
+check("llms.txt 언어판 안내", "/<lang>/in/<area>" in get("/llms.txt")[1])
 
 for s in slugs:
     h = get("/treatments/" + s)[1]

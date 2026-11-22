@@ -10,6 +10,8 @@ import {
 } from "@/lib/areas";
 import { CLINICS_CHECKED, FIELD_LABEL } from "@/lib/clinics";
 import { COLLECTED, pricesFor, range, won } from "@/lib/prices";
+import { LOCALES, LOCALE_META } from "@/data/i18n";
+import { areaL10n } from "@/data/areas-i18n";
 
 // 지역 묶음 쪽. 지역별 가격은 없다고 쪽에서 분명히 말한다. 순위·추천을 쓰지 않는다.
 
@@ -26,7 +28,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `Clinics and treatment prices in ${a.en}`,
     description: `${n.toLocaleString("en-US")} clinics in ${a.en} are on the official registry of institutions permitted to receive foreign patients, checked ${CLINICS_CHECKED}. Published price ranges on this site are nationwide, not per area.`,
-    alternates: { canonical: `/in/${a.slug}` },
+    alternates: {
+      canonical: `/in/${a.slug}`,
+      languages: {
+        en: `/in/${a.slug}`,
+        ...Object.fromEntries(
+          LOCALES.map((l) => [LOCALE_META[l].htmlLang, `/${l}/in/${a.slug}`]),
+        ),
+        "x-default": `/in/${a.slug}`,
+      },
+    },
   };
 }
 
@@ -175,6 +186,19 @@ export default async function AreaPage({ params }: Props) {
           <span key={o.slug}>
             {i > 0 && " · "}
             <Link href={`/in/${o.slug}`}>{o.en}</Link>
+          </span>
+        ))}
+      </p>
+
+      <h2>Other languages</h2>
+      <p className="note">
+        {LOCALES.map((l, i) => (
+          <span key={l}>
+            {i > 0 && " · "}
+            <Link href={`/${l}/in/${a.slug}`} hrefLang={LOCALE_META[l].htmlLang}>
+              {LOCALE_META[l].label}
+              {areaL10n(l, a.slug) ? ` — ${areaL10n(l, a.slug)!.name}` : ""}
+            </Link>
           </span>
         ))}
       </p>
