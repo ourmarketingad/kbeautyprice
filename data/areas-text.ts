@@ -29,6 +29,8 @@ export type AreaDict = {
   clinicsHereLead: (n: string, area: string) => string;
   seeAllClinics: (n: string, area: string) => string;
   otherAreasTitle: string;
+  /** 시술 목록 쪽에서 지역 쪽으로 보낼 때의 안내 한 줄. */
+  areaIndexLead: string;
 
   atTitle: (treatment: string, area: string) => string;
   atMetaWith: (
@@ -126,6 +128,8 @@ export const AREA_DICTS: Record<Locale, AreaDict> = {
       `クリニック名は価格の横ではなく登録簿のページに置いています。${a}の ${n} 院すべてを名前順に並べ、順位づけも推薦もしていません。`,
     seeAllClinics: (n, a) => `${a}の登録クリニック ${n} 院をすべて見る`,
     otherAreasTitle: "他の地域",
+    areaIndexLead:
+      "地域ごとのページもあります。価格は地域別にはありませんが、その地域の登録クリニック数と、ソウル全域の公開レンジを載せています。",
 
     atTitle: (t, a) => `${a}の${t} — クリニックと公開価格`,
     atMetaWith: (n, a, clinics, spec, w, collected) =>
@@ -200,6 +204,8 @@ export const AREA_DICTS: Record<Locale, AreaDict> = {
       `診所名稱放在登錄名單頁，不放在價格旁邊。${a}的 ${n} 家全部依名稱排列，不排名、不推薦。`,
     seeAllClinics: (n, a) => `查看${a}全部 ${n} 家登錄診所`,
     otherAreasTitle: "其他地區",
+    areaIndexLead:
+      "也有各地區的頁面。價格沒有按地區區分，但每一頁都寫出該地區的登錄診所家數，以及首爾全域的公開價格區間。",
 
     atTitle: (t, a) => `${a}的${t} — 診所與公開價格`,
     atMetaWith: (n, a, clinics, spec, w, collected) =>
@@ -274,6 +280,8 @@ export const AREA_DICTS: Record<Locale, AreaDict> = {
       `诊所名称放在登记名单页，不放在价格旁边。${a}的 ${n} 家全部按名称排列，不排名、不推荐。`,
     seeAllClinics: (n, a) => `查看${a}全部 ${n} 家登记诊所`,
     otherAreasTitle: "其他地区",
+    areaIndexLead:
+      "也有各地区的页面。价格不按地区区分，但每一页都写出该地区的登记诊所家数，以及首尔全域的公开价格区间。",
 
     atTitle: (t, a) => `${a}的${t} — 诊所与公开价格`,
     atMetaWith: (n, a, clinics, spec, w, collected) =>
@@ -349,6 +357,8 @@ export const AREA_DICTS: Record<Locale, AreaDict> = {
       `Los nombres de las clínicas están en las páginas del registro, no junto a los precios. Las ${n} de ${a} aparecen por orden alfabético, sin ranking y sin recomendación.`,
     seeAllClinics: (n, a) => `Ver las ${n} clínicas registradas en ${a}`,
     otherAreasTitle: "Otras zonas",
+    areaIndexLead:
+      "También hay una página por zona. Los precios no van por zona, pero cada página indica cuántas clínicas registradas hay allí y el rango publicado en todo Seúl.",
 
     atTitle: (t, a) => `${t} en ${a}: clínicas y precios publicados`,
     atMetaWith: (n, a, clinics, spec, w, collected) =>
@@ -424,6 +434,8 @@ export const AREA_DICTS: Record<Locale, AreaDict> = {
       `병원 이름은 가격 옆이 아니라 명부 쪽에 둡니다. ${a}의 ${n}곳을 모두 이름 순으로 놓았고, 순위도 추천도 없습니다.`,
     seeAllClinics: (n, a) => `${a} 등록 병원 ${n}곳 모두 보기`,
     otherAreasTitle: "다른 지역",
+    areaIndexLead:
+      "지역별 쪽도 있습니다. 가격은 지역별로 없지만, 각 쪽에 그 지역 등록 병원 수와 서울 전역 공개 범위를 적었습니다.",
 
     atTitle: (t, a) => `${a} ${t} — 병원과 공개 가격`,
     atMetaWith: (n, a, clinics, spec, w, collected) =>

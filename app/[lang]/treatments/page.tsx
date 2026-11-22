@@ -5,6 +5,9 @@ import { DICTS, LOCALES, LOCALE_META, isLocale, type Locale } from "@/data/i18n"
 import { categories } from "@/data/categories";
 import { treatments } from "@/data/treatments";
 import { COLLECTED, pricesFor, range, won } from "@/lib/prices";
+import { AREAS } from "@/lib/areas";
+import { AREA_DICTS } from "@/data/areas-text";
+import { areaL10n } from "@/data/areas-i18n";
 
 // 언어별 시술 목록. 가격이 있는 시술을 먼저 보여 준다.
 
@@ -94,6 +97,19 @@ export default async function LocalisedTreatments({ params }: Props) {
           <ul className="term-cards">{without.map(card)}</ul>
         </>
       )}
+
+      <h2>{AREA_DICTS[lang].otherAreasTitle}</h2>
+      <p className="sub">{AREA_DICTS[lang].areaIndexLead}</p>
+      <p className="note">
+        {AREAS.map((a, i) => (
+          <span key={a.slug}>
+            {i > 0 && " · "}
+            <Link href={`/${lang}/in/${a.slug}`}>
+              {areaL10n(lang, a.slug)?.name ?? a.en}
+            </Link>
+          </span>
+        ))}
+      </p>
 
       <h2>{d.otherLanguages}</h2>
       <p className="note">
