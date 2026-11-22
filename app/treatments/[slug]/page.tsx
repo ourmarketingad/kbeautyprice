@@ -1,3 +1,4 @@
+import { SITE } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -31,8 +32,6 @@ export const dynamicParams = false;
 export const revalidate = 300;
 export const generateStaticParams = () =>
   treatments.map((t) => ({ slug: t.slug }));
-
-const SITE = "https://kbeautyprice.vercel.app";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

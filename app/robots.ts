@@ -1,10 +1,9 @@
 import type { MetadataRoute } from "next";
+import { SITE } from "@/lib/site";
 
 // 검색 로봇 규칙.
 // [결정 2026-11-19 대표] 검색 공개 시작. AI 검색(인용)은 허용하고, 학습 수집 로봇은 막는다.
 // 로그인·관리·제보 확인 쪽은 색인하지 않는다.
-const SITE =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kbeautyprice.vercel.app";
 
 const PRIVATE = ["/admin", "/manage", "/auth", "/my-submissions", "/api/"];
 

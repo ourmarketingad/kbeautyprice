@@ -5,10 +5,9 @@ import providers from "@/data/registered-providers.json";
 import prices from "@/data/prices.json";
 import { AREAS, AREA_TREATMENTS, clinicsInArea } from "@/lib/areas";
 import { LOCALES } from "@/data/i18n";
+import { SITE } from "@/lib/site";
 
 // AI 검색이 읽는 안내 파일. 숫자가 낡지 않게 자료에서 그때그때 만든다.
-const SITE =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kbeautyprice.vercel.app";
 
 export const dynamic = "force-static";
 

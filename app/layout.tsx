@@ -3,14 +3,13 @@ import Link from "next/link";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import TabBar from "@/components/TabBar";
+import { SITE } from "@/lib/site";
 
 // [결정 2026-11-19 대표] 검색 공개 시작. 로봇 규칙은 app/robots.ts, 쪽 목록은 app/sitemap.ts.
 const INDEXABLE = true;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://kbeautyprice.vercel.app",
-  ),
+  metadataBase: new URL(SITE),
   title: {
     default: "KBeautyPrice | What treatments cost in Seoul, with sources",
     template: "%s | KBeautyPrice",

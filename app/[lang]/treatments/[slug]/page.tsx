@@ -1,3 +1,4 @@
+import { SITE } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -19,8 +20,6 @@ import {
 // 숫자·날짜·병원 수는 번역하지 않는다. 효과·적합성 주장은 쓰지 않는다.
 
 type Props = { params: Promise<{ lang: string; slug: string }> };
-
-const SITE = "https://kbeautyprice.vercel.app";
 
 export const dynamicParams = false;
 export function generateStaticParams() {

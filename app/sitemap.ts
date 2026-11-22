@@ -6,10 +6,9 @@ import { LOCALES } from "@/data/i18n";
 import { AREAS, AREA_TREATMENTS } from "@/lib/areas";
 import providers from "@/data/registered-providers.json";
 import prices from "@/data/prices.json";
+import { SITE } from "@/lib/site";
 
 // 쪽 목록. 로그인·관리·제보 확인 쪽은 넣지 않는다(robots.ts 와 같은 기준).
-const SITE =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kbeautyprice.vercel.app";
 
 type P = { slug: string };
 
