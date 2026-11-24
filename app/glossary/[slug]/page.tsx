@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { fitDesc, fitTitle } from "@/lib/meta";
 import {
   GLOSSARY_CATEGORY,
   getTerm,
@@ -23,8 +24,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = getTerm((await params).slug);
   if (!t) return { title: "Term not found" };
   return {
-    title: `${t.en}${t.ko ? ` (${t.ko})` : ""} — what it means on a Korean clinic price`,
-    description: t.short.slice(0, 155),
+    // 제목 49쪽이 60자를 넘겨 검색 결과에서 잘렸다(2026-11-24 실측) → 토막 단위로 맞춘다.
+    title: fitTitle([`${t.en}${t.ko ? ` (${t.ko})` : ""}`, "what it means on a Korean price"]),
+    description: fitDesc(t.short),
     alternates: { canonical: `/glossary/${t.slug}` },
   };
 }

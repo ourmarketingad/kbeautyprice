@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { fitDesc, fitTitle } from "@/lib/meta";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import QuoteBar from "@/components/QuoteBar";
@@ -14,7 +15,8 @@ export const generateStaticParams = () => guides.map((g) => ({ slug: g.slug }));
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const g = getGuide((await params).slug);
   if (!g) return {};
-  return { title: g.title, description: g.answer.slice(0, 155) };
+  // 제목 6쪽이 60자 초과(2026-11-24 실측). 말이 중간에서 끊기지 않게 단어 경계로 줄인다.
+  return { title: fitTitle([g.title]), description: fitDesc(g.answer) };
 }
 
 export default async function GuidePage({ params }: Props) {

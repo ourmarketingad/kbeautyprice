@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { fitDesc, fitTitle } from "@/lib/meta";
 import { DICTS, LOCALES, LOCALE_META, isLocale, type Locale } from "@/data/i18n";
 import { AREA_DICTS } from "@/data/areas-text";
 import { areaL10n, fieldL10n } from "@/data/areas-i18n";
@@ -67,17 +68,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const n = num(clinicsForTreatmentInArea(a, t).length);
   const lead = pricesFor(t.slug).find((p) => p.kind === "list");
   return {
-    title: ad.atTitle(name, l.name),
-    description: lead
-      ? ad.atMetaWith(
-          n,
-          l.name,
-          lead.clinics,
-          lead.spec,
-          range(lead.low, lead.high, won),
-          dateIn(COLLECTED, lang),
-        )
-      : ad.atMetaNo(n, l.name),
+    // 스페인어 제목·설명문 77쪽이 길이를 넘겼다(2026-11-24 실측). 번역 문구는 그대로 두고
+    // 검색 결과에서 잘릴 자리에서 우리가 끊는다(말 중간에서 끊기지 않게).
+    title: fitTitle([ad.atTitle(name, l.name)]),
+    description: fitDesc(
+      lead
+        ? ad.atMetaWith(
+            n,
+            l.name,
+            lead.clinics,
+            lead.spec,
+            range(lead.low, lead.high, won),
+            dateIn(COLLECTED, lang),
+          )
+        : ad.atMetaNo(n, l.name),
+    ),
     alternates: {
       canonical: `/${lang}/in/${a.slug}/${t.slug}`,
       languages: {

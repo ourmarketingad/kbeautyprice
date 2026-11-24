@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { fitDesc, fitTitle } from "@/lib/meta";
 import {
   AREAS,
   AREA_TREATMENTS,
@@ -49,10 +50,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const n = clinicsForTreatmentInArea(a, t).length;
   const lead = pricesFor(t.slug).find((p) => p.kind === "list");
   return {
-    title: `${t.en} in ${a.en} — clinics and published prices`,
-    description: lead
-      ? `${n.toLocaleString("en-US")} registered clinics in ${a.en} work in this field. Across Seoul, ${lead.clinics} clinics publish ${lead.spec} at ${range(lead.low, lead.high, won)}, collected ${COLLECTED}. Prices are not published by area.`
-      : `${n.toLocaleString("en-US")} registered clinics in ${a.en} work in this field. What to check before booking, and the published price range across Seoul.`,
+    // 제목 77쪽·설명문 77쪽이 길이를 넘겼다(2026-11-24 실측). 숫자와 수집 날짜는 그대로 두고,
+    // 쪽 본문에 이미 있는 「지역별로는 금액을 내지 않는다」 문장만 설명문에서 뺀다.
+    title: fitTitle([`${t.en} in ${a.en}`, "clinics and published prices"]),
+    description: fitDesc(
+      lead
+        ? `${n.toLocaleString("en-US")} registered clinics in ${a.en} work in this field. Seoul-wide: ${lead.clinics} clinics list ${range(lead.low, lead.high, won)}, collected ${COLLECTED}.`
+        : `${n.toLocaleString("en-US")} registered clinics in ${a.en} work in this field. What to check before booking, and the Seoul-wide range.`,
+    ),
     alternates: {
       canonical: `/in/${a.slug}/${t.slug}`,
       languages: {

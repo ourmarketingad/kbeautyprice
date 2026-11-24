@@ -11,6 +11,7 @@ import {
 import { CLINICS_CHECKED, FIELD_LABEL } from "@/lib/clinics";
 import { COLLECTED, pricesFor, range, won } from "@/lib/prices";
 import { LOCALES, LOCALE_META } from "@/data/i18n";
+import { fitDesc, fitTitle } from "@/lib/meta";
 import { areaL10n } from "@/data/areas-i18n";
 
 // 지역 묶음 쪽. 지역별 가격은 없다고 쪽에서 분명히 말한다. 순위·추천을 쓰지 않는다.
@@ -26,8 +27,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!a) return { title: "Area not found" };
   const n = clinicsInArea(a).length;
   return {
-    title: `Clinics and treatment prices in ${a.en}`,
-    description: `${n.toLocaleString("en-US")} clinics in ${a.en} are on the official registry of institutions permitted to receive foreign patients, checked ${CLINICS_CHECKED}. Published price ranges on this site are nationwide, not per area.`,
+    title: fitTitle([`Clinics and treatment prices in ${a.en}`]),
+    // 설명문 7쪽이 160자를 넘겼다(2026-11-24 실측). 「지역별이 아니라 전국 범위」라는 설명은
+    // 쪽 본문에 그대로 남겨 두고 설명문에서만 줄인다.
+    description: fitDesc(
+      `${n.toLocaleString("en-US")} clinics in ${a.en} are on the official registry for foreign patients, checked ${CLINICS_CHECKED}. Price ranges here are Seoul-wide.`,
+    ),
     alternates: {
       canonical: `/in/${a.slug}`,
       languages: {

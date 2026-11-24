@@ -2,6 +2,7 @@ import { SITE } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { fitDesc, fitTitle } from "@/lib/meta";
 import { DICTS, LOCALES, LOCALE_META, isLocale, type Locale } from "@/data/i18n";
 import { categories } from "@/data/categories";
 import { treatments } from "@/data/treatments";
@@ -48,8 +49,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const name = nameIn(t, lang);
   const has = pricesFor(slug).length > 0;
   return {
-    title: d.priceInSeoul(name),
-    description: has ? d.metaWithRange(name) : d.metaNoRange(name),
+    title: fitTitle([d.priceInSeoul(name)]),
+    description: fitDesc(has ? d.metaWithRange(name) : d.metaNoRange(name)),
     alternates: {
       canonical: `/${lang}/treatments/${slug}`,
       languages: {

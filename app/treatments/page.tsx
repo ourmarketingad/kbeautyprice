@@ -4,13 +4,25 @@ import { treatments } from "@/data/treatments";
 import PriceCard from "@/components/PriceCard";
 import { bandPhoto } from "@/lib/images";
 import { COLLECTED, hasPrices, pricesFor } from "@/lib/prices";
+import { LOCALES, LOCALE_META } from "@/data/i18n";
 
 export const metadata = {
   title: "Treatment prices in Seoul",
   description:
     "Price ranges for Korean clinic treatments from prices clinics publish, with clinic counts and the date checked.",
   // 분류·검색은 같은 쪽을 쿼리로 걸러 보여 준다. 대표 주소를 하나로 고정한다.
-  alternates: { canonical: "/treatments" },
+  // 언어 연결: 이 쪽은 5개 언어판이 모두 살아 있는데(/ja/treatments 등) 영어 쪽만 연결이
+  // 없어서 구글이 묶음으로 보지 못했다 — 2026-11-24 전수 측정에서 찾은 유일한 실제 누락이다.
+  alternates: {
+    canonical: "/treatments",
+    languages: {
+      en: "/treatments",
+      ...Object.fromEntries(
+        LOCALES.map((l) => [LOCALE_META[l].htmlLang, `/${l}/treatments`]),
+      ),
+      "x-default": "/treatments",
+    },
+  },
 };
 
 type Props = {

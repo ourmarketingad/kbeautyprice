@@ -11,6 +11,7 @@ import {
   sameAreaClinics,
 } from "@/lib/clinics";
 import prices from "@/data/prices.json";
+import { fitDesc, fitTitle } from "@/lib/meta";
 
 // 등록 병원 한 곳의 쪽. 순위·별점·후기·전후사진·추천을 쓰지 않는다.
 // 이 쪽은 「공식 명부에 등록돼 있다」는 사실과 지역·분야만 말하고, 가격은 병원이 아니라 시술 쪽으로 보낸다.
@@ -26,9 +27,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const c = clinicBySlug(slug);
   if (!c) return { title: "Clinic not found" };
   const field = FIELD_LABEL[c.field] ?? c.field;
+  // 길이를 맞춘 이유: 2026-11-24 전수 측정에서 이 묶음 1,372쪽 전부가 설명문 160자를 넘겨
+  // 검색 결과에서 뒤가 잘렸고, 378쪽은 제목도 60자를 넘겼다. 「명부일 뿐 추천이 아니다」는
+  // 문장은 쪽 본문에 그대로 있으므로 설명문에서는 뺀다.
   return {
-    title: `${c.en} — ${field} in ${c.area}`,
-    description: `${c.en} is on the official Medical Korea maintained registry of institutions permitted to receive foreign patients (${field}, ${c.area}), checked ${CLINICS_CHECKED}. A listing is not a recommendation.`,
+    title: fitTitle([c.en, `${field} in ${c.area}`]),
+    description: fitDesc(
+      `${c.en} (${field}, ${c.area}) is on the official registry of institutions permitted to receive foreign patients. Checked ${CLINICS_CHECKED}.`,
+    ),
     alternates: { canonical: `/hospitals/${c.slug}` },
   };
 }

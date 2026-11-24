@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { fitDesc, fitTitle } from "@/lib/meta";
 import { DICTS, LOCALES, LOCALE_META, isLocale, type Locale } from "@/data/i18n";
 import { AREA_DICTS } from "@/data/areas-text";
 import { areaL10n, fieldL10n } from "@/data/areas-i18n";
@@ -42,11 +43,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!a || !l) return {};
   const ad = AREA_DICTS[lang];
   return {
-    title: ad.areaTitle(l.name),
-    description: ad.areaMeta(
-      l.name,
-      num(clinicsInArea(a).length),
-      dateIn(CLINICS_CHECKED, lang),
+    title: fitTitle([ad.areaTitle(l.name)]),
+    description: fitDesc(
+      ad.areaMeta(
+        l.name,
+        num(clinicsInArea(a).length),
+        dateIn(CLINICS_CHECKED, lang),
+      ),
     ),
     alternates: {
       canonical: `/${lang}/in/${a.slug}`,
