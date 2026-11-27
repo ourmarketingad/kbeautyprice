@@ -54,6 +54,20 @@ export default function HowPricesWork() {
         and may exclude VAT, anaesthesia or follow-up. Only a written quote from
         the clinic tells you your price. This site is not medical advice.
       </p>
+      <h2>The legal side</h2>
+      <p>
+        Korea&apos;s Medical Service Act (Article 45) requires clinics to let
+        patients easily see the fees that national health insurance does not
+        cover, and forbids charging more than the posted fee. Most cosmetic
+        treatments are such fees, which is why clinics show them.{" "}
+        <a
+          href="https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%9D%98%EB%A3%8C%EB%B2%95/%EC%A0%9C45%EC%A1%B0"
+          rel="noopener"
+        >
+          Read Article 45 on the national law database
+        </a>{" "}
+        (in Korean).
+      </p>
       <h2>Corrections</h2>
       <p>
         If a number is wrong or a clinic has changed its price, write to

@@ -28,6 +28,10 @@ import {
 
 type Props = { params: Promise<{ slug: string }> };
 
+// 의료법 제45조(비급여 진료비용 등의 고지) — 국가법령정보센터 원문
+const LAW_ART45 =
+  "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%9D%98%EB%A3%8C%EB%B2%95/%EC%A0%9C45%EC%A1%B0";
+
 export const dynamicParams = false;
 export const revalidate = 300;
 export const generateStaticParams = () =>
@@ -112,6 +116,10 @@ function faqFor(name: string, rows: PriceRow[]) {
     });
   }
   out.push({
+    q: "Can a Korean clinic charge more than its posted price?",
+    a: "No. Under Korea's Medical Service Act (Article 45), clinics must let patients easily see the fees that national health insurance does not cover, and may not charge more than the fee they posted. Ask for the posted or written price before treatment.",
+  });
+  out.push({
     q: "Why do prices differ so much between clinics?",
     a: "Clinics differ in the product or device version, the dose, what is bundled in, and whether VAT is included. Compare written quotes item by item.",
   });
@@ -156,6 +164,23 @@ export default async function TreatmentPage({ params }: Props) {
           { "@type": "ListItem", position: cat ? 3 : 2, name: t.en, item: `${SITE}/treatments/${t.slug}` },
         ],
       },
+      ...(lead
+        ? [
+            {
+              "@type": "Dataset",
+              name: `${t.en} prices published by Seoul clinics`,
+              description: `${lead.spec}: ${range(lead.low, lead.high, won)} across ${lead.clinics} Seoul clinics, taken from prices the clinics publish on their own websites.`,
+              url: `${SITE}/treatments/${t.slug}`,
+              dateModified: lead.seenOn,
+              spatialCoverage: "Seoul, South Korea",
+              measurementTechnique:
+                "Prices clinics publish on their own websites; a range is shown only when enough clinics publish the same item",
+              variableMeasured: { "@type": "PropertyValue", name: "Price", unitText: "KRW" },
+              isAccessibleForFree: true,
+              creator: { "@type": "Organization", name: "KBeautyPrice", url: SITE },
+            },
+          ]
+        : []),
       {
         "@type": "FAQPage",
         mainEntity: faq.map((f) => ({
@@ -212,6 +237,7 @@ export default async function TreatmentPage({ params }: Props) {
               </span>
             </p>
           )}
+          {lead && <p className="note">{faq[0].a}</p>}
         </div>
       </header>
 
@@ -319,7 +345,12 @@ export default async function TreatmentPage({ params }: Props) {
         </ul>
         <p className="note" style={{ marginTop: 12 }}>
           Whether a treatment suits you is for a doctor to decide at
-          consultation.
+          consultation. Korean clinics may not charge more than the fee they
+          post (
+          <a href={LAW_ART45} rel="noopener">
+            Medical Service Act, Article 45
+          </a>
+          , in Korean).
         </p>
       </section>
 
